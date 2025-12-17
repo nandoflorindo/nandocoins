@@ -7,18 +7,18 @@
   <style>
     body { background:#20232a; font-family: Arial, sans-serif; color:#fff; margin:0; }
 
-    /* TOPO EXTREMAMENTE COMPACTO */
+    /* TOPO APENAS COM O LOGO */
     .topo {
       text-align:center;
       padding:0;
+      margin:0;
     }
     .topo-conteudo {
       display:inline-flex;
       flex-direction:column;
       align-items:center;
-      gap:1px;
       margin-top:2px;
-      margin-bottom:2px;
+      margin-bottom:6px;
     }
     .topo img.logo {
       width:100%;
@@ -27,21 +27,23 @@
       display:block;
       margin:0;
     }
-    .topo h1 {
-      margin:0;
-      font-size:24px;
-      letter-spacing:2px;
+
+    /* CAIXA DE AVISO / NOTÍCIA */
+    .aviso {
+      max-width:900px;
+      margin:0 auto 10px;
+      padding:8px 14px;
+      border-radius:8px;
+      background:#2b3a30;
+      border:1px solid #25d366;
+      font-size:13px;
     }
-    .topo p {
-      margin:0;
-      color:#ccc;
-      font-size:14px;
-    }
+    .aviso strong { color:#25d366; }
 
     /* CARDS */
     .produtos {
       max-width:1000px;
-      margin:6px auto 40px;
+      margin:0 auto 40px;
       display:flex;
       gap:30px;
       flex-wrap:wrap;
@@ -155,14 +157,17 @@
 </head>
 <body>
 
-  <!-- TOPO -->
+  <!-- TOPO SÓ COM O BANNER -->
   <header class="topo">
     <div class="topo-conteudo">
       <img src="LogoNandoCoins.png" alt="Nando Coins" class="logo">
-      <h1>NANDO COINS</h1>
-      <p>Compra e venda de coins - RubinOT e DeusOT</p>
     </div>
   </header>
+
+  <!-- CAIXA DE AVISO / NOTÍCIA -->
+  <section class="aviso">
+    <strong>Aviso:</strong> <span id="texto-aviso"></span>
+  </section>
 
   <!-- CARDS -->
   <section class="produtos">
@@ -227,8 +232,8 @@
     // Preços por 1k (1000 coins)
     const configPrecos = {
       DeusOT: {
-        comprar: 78, // cliente compra de você (R$/1k)
-        vender: 70   // cliente vende pra você (R$/1k)
+        comprar: 78,
+        vender: 70
       },
       RubinOT: {
         comprar: 86,
@@ -236,13 +241,16 @@
       }
     };
 
+    // TEXTO DO AVISO – EDITE AQUI
+    const configAviso = "Cotações atualizadas diariamente. Negociações apenas via WhatsApp oficial do Nando Coins.";
+
     /***********************
      * CÓDIGO
      ***********************/
     const precos = configPrecos;
 
     let jogoAtual = null;
-    let tipoAtual = null; // "comprar" ou "vender"
+    let tipoAtual = null;
     let totalAtual = 0;
 
     function atualizarTextosCards() {
@@ -258,7 +266,15 @@
         "Vendo: R$ " + r.comprar.toFixed(2).replace('.', ',') + " / 1k";
     }
 
+    function atualizarAviso() {
+      const spanAviso = document.getElementById("texto-aviso");
+      if (spanAviso) {
+        spanAviso.textContent = configAviso;
+      }
+    }
+
     atualizarTextosCards();
+    atualizarAviso();
 
     function abrirFormulario(jogo, tipo) {
       jogoAtual = jogo;
@@ -309,7 +325,6 @@
           ? "COMPRAR coins de você"
           : "VENDER minhas coins";
 
-      // mensagem formatada com COINS
       const texto =
         `*NANDO COINS*\n` +
         `-------------------------\n` +
@@ -323,7 +338,7 @@
         `Enviado pelo site Nando Coins`;
 
       const url = "https://wa.me/" + numeroWhats +
-                  "?text=" + encodeURIComponent(texto); /* [web:23][web:93] */
+                  "?text=" + encodeURIComponent(texto);
       window.open(url, "_blank");
     }
   </script>
