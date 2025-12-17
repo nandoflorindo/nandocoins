@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Nando Coins - RubinOT e DeusOT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { background:#20232a; font-family: Arial, sans-serif; color:#fff; margin:0; }
+
+    /* TOPO EXTREMAMENTE COMPACTO */
+    .topo {
+      text-align:center;
+      padding:0;
+    }
+    .topo-conteudo {
+      display:inline-flex;
+      flex-direction:column;
+      align-items:center;
+      gap:1px;
+      margin-top:2px;
+      margin-bottom:2px;
+    }
+    .topo img.logo {
+      width:100%;
+      max-width:380px;
+      height:auto;
+      display:block;
+      margin:0;
+    }
+    .topo h1 {
+      margin:0;
+      font-size:24px;
+      letter-spacing:2px;
+    }
+    .topo p {
+      margin:0;
+      color:#ccc;
+      font-size:14px;
+    }
+
+    /* CARDS */
+    .produtos {
+      max-width:1000px;
+      margin:6px auto 40px;
+      display:flex;
+      gap:30px;
+      flex-wrap:wrap;
+      justify-content:center;
+      padding:0 10px;
+    }
+    .card {
+      background:#2b2f36;
+      border-radius:12px;
+      padding:20px;
+      width:280px;
+      text-align:center;
+      box-shadow:0 10px 20px rgba(0,0,0,0.3);
+    }
+    .card img.card-img {
+      max-width:190px;
+      height:auto;
+      margin-bottom:15px;
+    }
+    .card h2 { margin:0 0 8px; }
+    .preco-novo {
+      color:#00c853;
+      font-weight:bold;
+      margin-bottom:10px;
+      font-size:14px;
+      white-space:pre-line;
+    }
+    .botoes-card {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:5px;
+    }
+    .btn-card {
+      border:none;
+      font-weight:bold;
+      padding:8px 20px;
+      border-radius:20px;
+      cursor:pointer;
+    }
+    .btn-card.compra { background: #25d366; color:#fff; }
+    .btn-card.venda  { background: #ffb74d; color:#000; }
+    .btn-card:hover { filter:brightness(1.05); }
+
+    /* FORMULÁRIO (COMPRA / VENDA) */
+    .modal {
+      max-width:400px;
+      margin:0 auto 40px;
+      background:#2b2f36;
+      border-radius:12px;
+      padding:16px 20px 20px;
+      box-shadow:0 10px 20px rgba(0,0,0,0.3);
+      display:none;
+      position:relative;
+    }
+    .modal-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .modal h3 { margin:0; font-size:18px; }
+    .btn-fechar {
+      background:transparent;
+      border:none;
+      color:#fff;
+      font-size:18px;
+      cursor:pointer;
+      padding:0 4px;
+      line-height:1;
+    }
+    .modal label { display:block; margin-top:10px; font-size:14px; }
+    .modal input {
+      width:100%;
+      padding:8px;
+      margin-top:4px;
+      border-radius:4px;
+      border:1px solid #444;
+      background:#20232a;
+      color:#fff;
+    }
+    .modal .total {
+      margin-top:12px;
+      font-weight:bold;
+      color:#00c853;
+    }
+    .botoes-modal {
+      display:flex;
+      gap:10px;
+      margin-top:15px;
+      justify-content:flex-end;
+    }
+    .btn-secundario {
+      background:#555;
+      border:none;
+      color:#fff;
+      padding:8px 14px;
+      border-radius:6px;
+      cursor:pointer;
+    }
+    .btn-principal {
+      background:#25d366;
+      border:none;
+      color:#fff;
+      padding:8px 14px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPO -->
+  <header class="topo">
+    <div class="topo-conteudo">
+      <img src="LogoNandoCoins.png" alt="Nando Coins" class="logo">
+      <h1>NANDO COINS</h1>
+      <p>Compra e venda de coins - RubinOT e DeusOT</p>
+    </div>
+  </header>
+
+  <!-- CARDS -->
+  <section class="produtos">
+    <!-- DEUSOT -->
+    <div class="card">
+      <img src="NandoDeusOT.png" alt="DeusOT Coins" class="card-img">
+      <h2>DeusOT Coins</h2>
+      <p class="preco-novo" id="texto-preco-deusot"></p>
+      <div class="botoes-card">
+        <button class="btn-card compra" onclick="abrirFormulario('DeusOT','comprar')">
+          Comprar coins
+        </button>
+        <button class="btn-card venda" onclick="abrirFormulario('DeusOT','vender')">
+          Vender coins
+        </button>
+      </div>
+    </div>
+
+    <!-- RUBINOT -->
+    <div class="card">
+      <img src="NandoRubinot.png" alt="RubinOT Coins" class="card-img">
+      <h2>RubinOT Coins</h2>
+      <p class="preco-novo" id="texto-preco-rubinot"></p>
+      <div class="botoes-card">
+        <button class="btn-card compra" onclick="abrirFormulario('RubinOT','comprar')">
+          Comprar coins
+        </button>
+        <button class="btn-card venda" onclick="abrirFormulario('RubinOT','vender')">
+          Vender coins
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMULÁRIO -->
+  <section id="form-venda" class="modal">
+    <div class="modal-header">
+      <h3 id="titulo-jogo">Negociação</h3>
+      <button class="btn-fechar" onclick="fecharFormulario()">×</button>
+    </div>
+
+    <label for="quantidade">Quantidade de coins (ex: 450)</label>
+    <input type="number" id="quantidade" min="1" step="1" placeholder="Digite a quantidade de coins">
+
+    <label for="nick">Seu nick / personagem</label>
+    <input type="text" id="nick" placeholder="Nick no jogo">
+
+    <p class="total" id="total-texto">Total: R$ 0,00</p>
+
+    <div class="botoes-modal">
+      <button class="btn-secundario" onclick="fecharFormulario()">Cancelar</button>
+      <button class="btn-principal" onclick="enviarWhatsApp()">Enviar no WhatsApp</button>
+    </div>
+  </section>
+
+  <script>
+    /***********************
+     * CONFIGURAÇÕES (ALTERAR AQUI)
+     ***********************/
+    const numeroWhats = "5511966542013"; // seu número
+
+    // Preços por 1k (1000 coins)
+    const configPrecos = {
+      DeusOT: {
+        comprar: 78, // cliente compra de você (R$/1k)
+        vender: 70   // cliente vende pra você (R$/1k)
+      },
+      RubinOT: {
+        comprar: 86,
+        vender: 81
+      }
+    };
+
+    /***********************
+     * CÓDIGO
+     ***********************/
+    const precos = configPrecos;
+
+    let jogoAtual = null;
+    let tipoAtual = null; // "comprar" ou "vender"
+    let totalAtual = 0;
+
+    function atualizarTextosCards() {
+      const d = configPrecos.DeusOT;
+      const r = configPrecos.RubinOT;
+
+      document.getElementById("texto-preco-deusot").innerText =
+        "Compro: R$ " + d.vender.toFixed(2).replace('.', ',') + " / 1k\n" +
+        "Vendo: R$ " + d.comprar.toFixed(2).replace('.', ',') + " / 1k";
+
+      document.getElementById("texto-preco-rubinot").innerText =
+        "Compro: R$ " + r.vender.toFixed(2).replace('.', ',') + " / 1k\n" +
+        "Vendo: R$ " + r.comprar.toFixed(2).replace('.', ',') + " / 1k";
+    }
+
+    atualizarTextosCards();
+
+    function abrirFormulario(jogo, tipo) {
+      jogoAtual = jogo;
+      tipoAtual = tipo;
+      document.getElementById("form-venda").style.display = "block";
+
+      const titulo = tipo === "comprar" ? "Comprar coins - " : "Vender coins - ";
+      document.getElementById("titulo-jogo").innerText = titulo + jogo;
+
+      document.getElementById("quantidade").value = "";
+      document.getElementById("nick").value = "";
+      atualizarTotal();
+    }
+
+    function fecharFormulario() {
+      document.getElementById("form-venda").style.display = "none";
+    }
+
+    document.getElementById("quantidade").addEventListener("input", atualizarTotal);
+
+    function atualizarTotal() {
+      const coins = Number(document.getElementById("quantidade").value || 0);
+      if (!jogoAtual || !tipoAtual) {
+        document.getElementById("total-texto").innerText = "Total: R$ 0,00";
+        return;
+      }
+      const precoK = precos[jogoAtual][tipoAtual] || 0;
+      const milhares = coins / 1000;
+      totalAtual = milhares * precoK;
+      document.getElementById("total-texto").innerText =
+        "Total: R$ " + totalAtual.toFixed(2).replace(".", ",");
+    }
+
+    function enviarWhatsApp() {
+      const coins = Number(document.getElementById("quantidade").value || 0);
+      const nick = document.getElementById("nick").value.trim();
+
+      if (!jogoAtual || !tipoAtual || coins <= 0) {
+        alert("Informe o jogo, o tipo de operação e a quantidade de coins.");
+        return;
+      }
+
+      const precoK = precos[jogoAtual][tipoAtual];
+      const milhares = coins / 1000;
+
+      const operacao =
+        tipoAtual === "comprar"
+          ? "COMPRAR coins de você"
+          : "VENDER minhas coins";
+
+      // mensagem formatada com COINS
+      const texto =
+        `*NANDO COINS*\n` +
+        `-------------------------\n` +
+        `*Operação:* ${operacao}\n` +
+        `*Jogo:* ${jogoAtual}\n` +
+        `*Quantidade:* ${coins} coins (${milhares.toFixed(3)}k)\n` +
+        `*Preço por 1k:* R$ ${precoK.toFixed(2)}\n` +
+        `*Valor total:* R$ ${totalAtual.toFixed(2)}\n` +
+        (nick ? `*Nick:* ${nick}\n` : "") +
+        `-------------------------\n` +
+        `Enviado pelo site Nando Coins`;
+
+      const url = "https://wa.me/" + numeroWhats +
+                  "?text=" + encodeURIComponent(texto); /* [web:23][web:93] */
+      window.open(url, "_blank");
+    }
+  </script>
+</body>
+</html>
