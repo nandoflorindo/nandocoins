@@ -375,7 +375,7 @@
         // CONFIGURAÇÕES FÁCEIS DE EDITAR
         // ---------------------------------------------------
 
-        // Preços por 1.000 moedas em cada servidor
+        // Preços por 1.000 Coins em cada servidor
         const precos = {
             DeusOT: { compra: 71, venda: 78 },
             RubinOT: { compra: 81, venda: 86 }
@@ -431,11 +431,11 @@
 
         avisoTopoDiv.innerHTML = textoAvisoTopo;
         precoDeusDiv.innerHTML =
-            `Compro: <strong>R$ ${precos.DeusOT.compra.toFixed(2).replace(".", ",")} / 1.000 moedas</strong><br>` +
-            `Vendo: <strong>R$ ${precos.DeusOT.venda.toFixed(2).replace(".", ",")} / 1.000 moedas</strong>`;
+            `Compro: <strong>R$ ${precos.DeusOT.compra.toFixed(2).replace(".", ",")} / 1.000 Coins</strong><br>` +
+            `Vendo: <strong>R$ ${precos.DeusOT.venda.toFixed(2).replace(".", ",")} / 1.000 Coins</strong>`;
         precoRubinDiv.innerHTML =
-            `Compro: <strong>R$ ${precos.RubinOT.compra.toFixed(2).replace(".", ",")} / 1.000 moedas</strong><br>` +
-            `Vendo: <strong>R$ ${precos.RubinOT.venda.toFixed(2).replace(".", ",")} / 1.000 moedas</strong>`;
+            `Compro: <strong>R$ ${precos.RubinOT.compra.toFixed(2).replace(".", ",")} / 1.000 Coins</strong><br>` +
+            `Vendo: <strong>R$ ${precos.RubinOT.venda.toFixed(2).replace(".", ",")} / 1.000 Coins</strong>`;
 
         function aplicarDisponibilidade() {
             if (!disponibilidade.DeusOT.comprar) {
