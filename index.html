@@ -586,9 +586,10 @@ ${textoOperacaoMsg}
 ━━━━━━━━━━━━━━
 *Condições:*
 - Cotação sujeita à confirmação no momento da negociação.
-- Entrega das coins após a confirmação do pagamento (PIX ou combinado).${textoDisponibilidade}
+- *COMPRA* - Entrega das coins após a confirmação do pagamento (PIX ou combinado).
+- *VENDA* - Vou te passar o Nick para envio da suas Coins.${textoDisponibilidade}
 
-Pode me confirmar a cotação e a disponibilidade, por favor?`;
+Caso eu já estiver *ONLINE*, te respondo na hora, se eu demorar na resposta, assim que possível te retornarei`;
 
             const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
             window.open(url, "_blank");
