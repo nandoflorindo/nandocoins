@@ -2,615 +2,274 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
-    <title>Nando Coins - Compra e Venda de Coins</title>
+    <title>Nando Coins - Compra e Venda</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --gold: #ffd369;
+            --green: #00c853;
+            --orange: #ffb74d;
+            --red: #ff4b4b;
+            --dark-card: #2c343f;
+            --bg: #1a1e23;
+        }
+
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #222831;
-            color: #eeeeee;
+            margin: 0; font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #393e46 0%, var(--bg) 100%);
+            color: #eee; min-height: 100vh; padding-bottom: 50px;
         }
 
-        .header {
-            text-align: center;
-            padding: 20px;
+        .header { text-align: center; padding: 30px 10px; max-width: 1000px; margin: 0 auto; }
+        .header img { width: 100%; max-width: 550px; height: auto; filter: drop-shadow(0 0 15px rgba(255,211,105,0.2)); }
+        
+        .notice-bar {
+            max-width: 850px; margin: 10px auto 30px;
+            padding: 15px; border-radius: 12px; text-align: center; font-size: 14px;
+            transition: 0.5s; border: 1px solid transparent;
         }
+        .status-online { background: rgba(0, 200, 83, 0.1); border-color: var(--green); color: #afffcd; }
+        .status-offline { background: rgba(255, 75, 75, 0.1); border-color: var(--red); color: #ffbaba; }
 
-        .header img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .notice {
-            max-width: 900px;
-            margin: 10px auto 20px;
-            background-color: #198754;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            border: 1px solid #145c32;
-        }
-
-        .notice strong {
-            font-weight: bold;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto 10px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 0 10px;
-        }
+        .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 0 20px; }
 
         .card {
-            background-color: #393e46;
-            border-radius: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            width: 350px;
-            max-width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
+            background: var(--dark-card); border-radius: 20px;
+            padding: 25px; width: 300px; text-align: center;
+            transition: 0.3s; border: 2px solid transparent; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .card img {
-            max-width: 100%;
-            height: 200px;
-            object-fit: contain;
-            margin-bottom: 10px;
+        .card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .card.active { border-color: var(--gold); background: #343c48; }
+        .card img { width: 120px; height: 120px; object-fit: contain; margin-bottom: 15px; }
+        .card h2 { margin: 0; color: var(--gold); font-size: 26px; }
+
+        .form-area { max-width: 600px; margin: 40px auto; padding: 0 20px; display: none; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } }
+
+        .form-box { background: var(--dark-card); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); }
+
+        .operation-selector { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+        
+        .op-btn {
+            width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #444;
+            background: transparent; color: #aaa; cursor: pointer;
+            font-weight: bold; transition: 0.3s; font-family: 'Poppins';
+            text-transform: uppercase; font-size: 13px;
         }
 
-        .card h2 {
-            margin: 10px 0;
-            font-size: 24px;
+        .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); }
+        .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); }
+
+        .op-btn:disabled { 
+            cursor: not-allowed; opacity: 0.4; border: 2px dashed #555; 
+            background: rgba(0,0,0,0.2); color: #777;
         }
 
-        .card p {
-            margin: 8px 0;
-            font-size: 14px;
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; color: var(--gold); margin-bottom: 8px; font-weight: 600; }
+        .form-group input {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #444;
+            background: #1e242c; color: white; box-sizing: border-box; outline: none;
         }
 
-        .price-info {
-            margin: 12px 0;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .price-info strong {
-            color: #ffd369;
-        }
-
-        .buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 20px;
-            padding: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #222831;
-            transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s ease;
-        }
-
-        .btn-green {
-            background-color: #00c853;
-        }
-
-        .btn-orange {
-            background-color: #ffb74d;
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-            opacity: 0.95;
-        }
-
-        .btn:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: none;
-        }
-
-        .btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        .form-area {
-            max-width: 900px;
-            margin: 0 auto 30px;
-            padding: 0 10px;
-        }
-
-        .form-box {
-            display: none;
-            background-color: #393e46;
-            border-radius: 12px;
-            padding: 14px 16px 12px 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            font-size: 14px;
-        }
-
-        .form-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .form-header h3 {
-            margin: 0;
-            font-size: 16px;
-        }
-
-        .form-close {
-            background: none;
-            border: none;
-            color: #eeeeee;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .form-box p {
-            margin: 4px 0 8px 0;
-            font-size: 13px;
-        }
-
-        .form-group {
-            margin-bottom: 8px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            margin-bottom: 3px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 6px 8px;
-            border-radius: 4px;
-            border: 1px solid #393e46;
-            background-color: #1e242c;
-            color: #eeeeee;
-            font-size: 13px;
-            box-sizing: border-box;
-        }
-
-        .form-group input::placeholder {
-            color: #aaaaaa;
-        }
-
-        .summary-box {
-            margin-top: 8px;
-            font-size: 13px;
-            background-color: #1e242c;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px dashed #393e46;
-        }
-
-        .summary-box strong {
-            color: #ffd369;
-        }
-
-        .form-actions {
-            margin-top: 10px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            font-size: 13px;
-        }
-
-        .btn-cancel {
-            background-color: #555;
-            color: #eee;
-            border-radius: 20px;
-            border: none;
-            padding: 7px 12px;
-            cursor: pointer;
-        }
+        .summary-box { background: #1e242c; padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--gold); }
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .total-line { font-size: 22px; font-weight: 700; border-top: 1px solid #333; padding-top: 15px; margin-top: 10px; color: var(--gold); }
 
         .whatsapp-btn {
-            background-color: #25d366;
-            color: #ffffff;
-            border: none;
-            border-radius: 20px;
-            padding: 7px 12px;
-            font-size: 13px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            background: #25d366; color: white; width: 100%; padding: 18px;
+            border-radius: 15px; border: none; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            font-size: 16px; transition: 0.3s; text-transform: uppercase;
         }
 
-        .whatsapp-btn img {
-            height: 16px;
-        }
-
-        footer {
-            border-top: 1px solid #222;
-            padding: 10px 12px 18px 12px;
-            text-align: center;
-            font-size: 11px;
-            color: #aaa;
-        }
-
-        footer a {
-            color: #ffcc00;
-            text-decoration: none;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                width: 100%;
-            }
-
-            .notice,
-            .form-area {
-                margin: 10px;
-            }
-        }
+        footer { text-align: center; margin-top: 60px; padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .disclaimer { font-size: 11px; opacity: 0.5; max-width: 600px; margin: 0 auto 5px; line-height: 1.4; }
+        .disclaimer a { color: inherit; text-decoration: underline; }
     </style>
 </head>
 <body>
+
     <div class="header">
-        <img src="LogoNandoCoins.png" alt="" />
+        <img src="LogoNandoCoins.png" alt="Nando Coins">
     </div>
 
-    <div class="notice" id="textoAvisoTopo">
-        <!-- preenchido via JS -->
-    </div>
+    <div id="statusBarr" class="notice-bar"></div>
 
     <div class="container">
-        <!-- Card DeusOT -->
-        <div class="card" data-servidor="DeusOT">
-            <img src="NandoDeusOT.png" alt="DeusOT" />
+        <div class="card" id="card-DeusOT" onclick="toggleServidor('DeusOT')">
+            <img src="NandoDeusOT.png" alt="DeusOT">
             <h2>DeusOT</h2>
-            <div class="price-info" id="precoDeus">
-                <!-- preenchido via JS -->
-            </div>
-            <div class="buttons">
-                <button class="btn btn-green" id="btnComprarDeus" data-acao="comprar" data-servidor="DeusOT">Comprar coins</button>
-                <button class="btn btn-orange" id="btnVenderDeus" data-acao="vender" data-servidor="DeusOT">Vender coins</button>
-            </div>
+            <div id="info-DeusOT" style="font-size: 13px; margin-top: 10px; color: #bbb;"></div>
         </div>
 
-        <!-- Card RubinOT -->
-        <div class="card" data-servidor="RubinOT">
-            <img src="NandoRubinot.png" alt="RubinOT" />
+        <div class="card" id="card-RubinOT" onclick="toggleServidor('RubinOT')">
+            <img src="NandoRubinot.png" alt="RubinOT">
             <h2>RubinOT</h2>
-            <div class="price-info" id="precoRubin">
-                <!-- preenchido via JS -->
-            </div>
-            <div class="buttons">
-                <button class="btn btn-green" id="btnComprarRubin" data-acao="comprar" data-servidor="RubinOT">Comprar coins</button>
-                <button class="btn btn-orange" id="btnVenderRubin" data-acao="vender" data-servidor="RubinOT">Vender coins</button>
-            </div>
+            <div id="info-RubinOT" style="font-size: 13px; margin-top: 10px; color: #bbb;"></div>
         </div>
     </div>
 
-    <!-- Caixinha fixa que aparece só quando clica -->
-    <div class="form-area">
-        <div class="form-box" id="formBox">
-            <div class="form-header">
-                <h3 id="formTitulo">Operação</h3>
-                <button class="form-close" id="btnFecharForm">&times;</button>
-            </div>
-            <p id="formSubtitulo">
-                Preencha a quantidade de coins, seu nick e a forma de pagamento. O valor aproximado será calculado automaticamente.
-            </p>
-
-            <div class="form-group">
-                <label for="inputQuantidade">Quantidade de coins</label>
-                <input
-                    type="number"
-                    id="inputQuantidade"
-                    placeholder="Ex: 100, 450, 1000..."
-                    min="1"
-                />
+    <div class="form-area" id="formArea">
+        <div class="form-box">
+            <h3 style="margin:0; text-align: center;">Pedido: <span id="nomeServidorTxt" style="color:var(--gold)"></span></h3>
+            
+            <div class="operation-selector">
+                <button class="op-btn" id="btn-op-comprar" data-op="comprar" onclick="setOperacao('comprar')">QUERO COMPRAR COINS</button>
+                <button class="op-btn" id="btn-op-vender" data-op="vender" onclick="setOperacao('vender')">QUERO VENDER MINHAS COINS</button>
             </div>
 
-            <div class="form-group">
-                <label for="inputNick">Seu nick / personagem</label>
-                <input
-    type="text"
-    id="inputNick"
-    placeholder="Nick no jogo"
-    pattern="[A-Za-zÀ-ÿ\s]+"
-    title="Use apenas letras e espaços"
-    oninput="this.value = this.value.replace(/[0-9]/g, '')"
-/>
+            <div id="camposForm">
+                <div class="form-group">
+                    <label>Quantidade de Coins</label>
+                    <input type="number" id="inputQtd" placeholder="Ex: 1000" oninput="atualizarTudo()">
+                </div>
+
+                <div class="form-group">
+                    <label>Seu Nick no Jogo (Apenas letras)</label>
+                    <input type="text" id="inputNick" placeholder="Nome do personagem" oninput="validarNick(this)">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="inputPagamento">Forma de pagamento</label>
-                <select id="inputPagamento">
-                    <option value="PIX">PIX</option>
-                    <option value="outro">Outro (combinar no WhatsApp)</option>
-                </select>
-            </div>
+            <div class="summary-box" id="summaryBox"></div>
 
-            <div class="summary-box" id="summaryBox">
-                Selecione um servidor e uma operação acima para começar.<br />
-                <strong>Observação:</strong> tudo será finalizado somente após a confirmação do PIX.
-            </div>
-
-            <div class="form-actions">
-                <button class="btn-cancel" id="btnCancelar">Cancelar</button>
-                <button class="whatsapp-btn" id="btnWhatsApp">
-                    <img
-                        src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                        alt="WhatsApp"
-                    />
-                    Enviar no WhatsApp
-                </button>
-            </div>
+            <button class="whatsapp-btn" id="btnZapFinal" onclick="enviarZap()">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="24">
+                FINALIZAR PEDIDO
+            </button>
         </div>
     </div>
 
     <footer>
-        <p>Este site não é afiliado nem patrocinado pelo servidor Oficial do RubinOT ou DeusOT. Uso apenas para negociação informal de Coins.</p>
-        <p style="margin-top: 4px;">
-            Contato direto:
+        <p class="disclaimer">
+            Este site não é afiliado nem patrocinado pelo servidor Oficial do RubinOT ou DeusOT. Uso apenas para negociação informal de Coins.
+        </p>
+        <p class="disclaimer">
+            Contato direto: 
             <a href="https://wa.me/5511966542013" target="_blank">WhatsApp Nando Coins</a>
         </p>
     </footer>
 
     <script>
-        // ---------------------------------------------------
-        // CONFIGURAÇÕES FÁCEIS DE EDITAR
-        // ---------------------------------------------------
+        /* =======================================================
+           PAINEL DE CONTROLE (EDITE AQUI)
+        ======================================================= */
+        const MEU_WHATSAPP = "5511966542013";
+        const ESTOU_ONLINE = false; // true = Online (Verde), false = Offline (Vermelho)
 
-        // Preços por 1.000 Coins em cada servidor
-        const precos = {
-            DeusOT: { compra: 71, venda: 79 },
-            RubinOT: { compra: 81, venda: 86 }
+        const AVISO_ONLINE = "📡 <strong>STATUS: ONLINE</strong> - Atendimento imediato disponível!<br>• Cubro ofertas de outros revendedores!";
+        const AVISO_OFFLINE = "💤 <strong>STATUS: OFFLINE</strong> - Responderei assim que possível!";
+
+        const DADOS = {
+            "DeusOT": { venda: 79.00, compra: 71.00, disponivelVenda: true, disponivelCompra: true },
+            "RubinOT": { venda: 86.00, compra: 81.00, disponivelVenda: true, disponivelCompra: true }
         };
 
-        // Disponibilidade por servidor e tipo de operação
-        const disponibilidade = {
-            DeusOT: { comprar: true,  vender: true },
-            RubinOT: { comprar: true,  vender: true }
-        };
+        /* =======================================================
+           LÓGICA DO SISTEMA
+        ======================================================= */
+        let servidorAtivo = null;
+        let operacaoAtiva = null; 
 
-        // Número do WhatsApp (apenas dígitos, com DDI+DDD)
-        const numeroWhatsApp = "5511966542013";
-
-        // Texto do aviso verde do topo
-        const textoAvisoTopo =
-            "<strong>Aviso:</strong> Cotações atualizadas diariamente. " +
-            "Negociações apenas via WhatsApp oficial do Nando Coins. " +
-            "Antes de finalizarmos qualquer operação, vamos confirmar tudo antes para não ter erro de valores.";
-
-        // Texto padrão de observação sobre PIX
-        const textoObservacaoPix =
-            "<strong>Observação:</strong> tudo será finalizado somente após a confirmação do PIX.";
-
-        // ---------------------------------------------------
-        // LÓGICA DO SITE
-        // ---------------------------------------------------
-
-        let operacaoAtual = null; // "comprar" ou "vender"
-        let servidorAtual = null; // "DeusOT" ou "RubinOT"
-        let indisponivelAtual = false;
-
-        const avisoTopoDiv  = document.getElementById("textoAvisoTopo");
-        const precoDeusDiv  = document.getElementById("precoDeus");
-        const precoRubinDiv = document.getElementById("precoRubin");
-
-        const btnComprarDeus = document.getElementById("btnComprarDeus");
-        const btnVenderDeus  = document.getElementById("btnVenderDeus");
-        const btnComprarRubin = document.getElementById("btnComprarRubin");
-        const btnVenderRubin  = document.getElementById("btnVenderRubin");
-
-        const formBox       = document.getElementById("formBox");
-        const formTitulo    = document.getElementById("formTitulo");
-        const formSubtitulo = document.getElementById("formSubtitulo");
-        const btnFecharForm = document.getElementById("btnFecharForm");
-
-        const inputQuantidade = document.getElementById("inputQuantidade");
-        const inputNick       = document.getElementById("inputNick");
-        const inputPagamento  = document.getElementById("inputPagamento");
-        const summaryBox      = document.getElementById("summaryBox");
-        const btnWhatsApp     = document.getElementById("btnWhatsApp");
-        const btnCancelar     = document.getElementById("btnCancelar");
-
-        avisoTopoDiv.innerHTML = textoAvisoTopo;
-        precoDeusDiv.innerHTML =
-            `Compro: <strong>R$ ${precos.DeusOT.compra.toFixed(2).replace(".", ",")} / 1.000 Coins</strong><br>` +
-            `Vendo: <strong>R$ ${precos.DeusOT.venda.toFixed(2).replace(".", ",")} / 1.000 Coins</strong>`;
-        precoRubinDiv.innerHTML =
-            `Compro: <strong>R$ ${precos.RubinOT.compra.toFixed(2).replace(".", ",")} / 1.000 Coins</strong><br>` +
-            `Vendo: <strong>R$ ${precos.RubinOT.venda.toFixed(2).replace(".", ",")} / 1.000 Coins</strong>`;
-
-        function aplicarDisponibilidade() {
-            if (!disponibilidade.DeusOT.comprar) {
-                btnComprarDeus.textContent = "Comprar (indisponível)";
-                btnComprarDeus.disabled = true;
-            }
-            if (!disponibilidade.DeusOT.vender) {
-                btnVenderDeus.textContent = "Vender (indisponível)";
-                btnVenderDeus.disabled = true;
-            }
-            if (!disponibilidade.RubinOT.comprar) {
-                btnComprarRubin.textContent = "Comprar (indisponível)";
-                btnComprarRubin.disabled = true;
-            }
-            if (!disponibilidade.RubinOT.vender) {
-                btnVenderRubin.textContent = "Vender (indisponível)";
-                btnVenderRubin.disabled = true;
-            }
-        }
-        aplicarDisponibilidade();
-
-        function abrirFormulario(acao, servidor) {
-            operacaoAtual = acao;
-            servidorAtual = servidor;
-            indisponivelAtual = !disponibilidade[servidor][acao];
-
-            const textoOperacao =
-                acao === "comprar" ? "Comprar coins" : "Vender coins";
-
-            formTitulo.textContent = `${textoOperacao} - ${servidor}`;
-
-            if (indisponivelAtual) {
-                formSubtitulo.textContent =
-                    "No momento esta operação está indisponível para este servidor. Você ainda pode me chamar no WhatsApp para verificar disponibilidade.";
-            } else {
-                formSubtitulo.textContent =
-                    "Preencha a quantidade de coins, seu nick e a forma de pagamento. O valor aproximado será calculado automaticamente.";
-            }
-
-            inputQuantidade.value = "";
-            inputNick.value = "";
-            inputPagamento.value = "PIX";
-
-            summaryBox.innerHTML =
-                (indisponivelAtual
-                    ? "Esta operação está marcada como indisponível no momento.<br>"
-                    : "Preencha os dados para ver o resumo da negociação.<br>") +
-                textoObservacaoPix;
-
-            formBox.style.display = "block";
-            window.scrollTo({ top: formBox.offsetTop - 20, behavior: "smooth" });
+        const barraStatus = document.getElementById('statusBarr');
+        if(ESTOU_ONLINE) {
+            barraStatus.innerHTML = AVISO_ONLINE;
+            barraStatus.className = "notice-bar status-online";
+        } else {
+            barraStatus.innerHTML = AVISO_OFFLINE;
+            barraStatus.className = "notice-bar status-offline";
         }
 
-        function fecharFormulario() {
-            formBox.style.display = "none";
-            operacaoAtual = null;
-            servidorAtual = null;
-            indisponivelAtual = false;
+        document.getElementById('info-DeusOT').innerHTML = `Venda: R$ ${DADOS.DeusOT.venda.toFixed(2)}<br>Compra: R$ ${DADOS.DeusOT.compra.toFixed(2)}`;
+        document.getElementById('info-RubinOT').innerHTML = `Venda: R$ ${DADOS.RubinOT.venda.toFixed(2)}<br>Compra: R$ ${DADOS.RubinOT.compra.toFixed(2)}`;
+
+        function validarNick(el) {
+            el.value = el.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, ""); 
+            atualizarTudo();
         }
 
-        function atualizarResumo() {
-            const qtdMoedas = parseInt(inputQuantidade.value, 10) || 0;
-            const nick      = inputNick.value.trim();
-            const formaPag  = inputPagamento.value;
-
-            if (!servidorAtual || !operacaoAtual || !qtdMoedas) {
-                summaryBox.innerHTML =
-                    (indisponivelAtual
-                        ? "Esta operação está marcada como indisponível no momento.<br>"
-                        : "Preencha os dados para ver o resumo da negociação.<br>") +
-                    textoObservacaoPix;
-            } else {
-                const dadosServidor = precos[servidorAtual];
-                const tipoPreco     = operacaoAtual === "comprar" ? "venda" : "compra";
-                const precoPorMil   = dadosServidor[tipoPreco];
-                const valorTotal    = (qtdMoedas / 1000) * precoPorMil;
-                const valorTexto    = "R$ " + valorTotal.toFixed(2).replace(".", ",");
-
-                const textoOperacaoResumo =
-                    operacaoAtual === "comprar"
-                        ? "comprar coins de mim"
-                        : "vender suas coins para mim";
-
-                let textoIndisp = "";
-                if (indisponivelAtual) {
-                    textoIndisp =
-                        "<br><strong>Atenção:</strong> esta operação está marcada como indisponível agora. Use a mensagem apenas para combinar ou verificar disponibilidade.";
-                }
-
-                summaryBox.innerHTML =
-                    `Você quer <strong>${textoOperacaoResumo}</strong> no servidor <strong>${servidorAtual}</strong><br>` +
-                    `Quantidade: <strong>${qtdMoedas} coins</strong><br>` +
-                    `Valor aproximado: <strong>${valorTexto}</strong><br>` +
-                    (nick ? `Personagem: <strong>${nick}</strong><br>` : "") +
-                    `Pagamento: <strong>${formaPag}</strong><br>` +
-                    textoObservacaoPix +
-                    textoIndisp;
-            }
-        }
-
-        function enviarWhatsApp() {
-            const qtdMoedas = parseInt(inputQuantidade.value, 10) || 0;
-            const nick      = inputNick.value.trim();
-            const formaPag  = inputPagamento.value;
-
-            if (!servidorAtual || !operacaoAtual) {
-                alert("Selecione primeiro um servidor e a operação (comprar/vender).");
+        function toggleServidor(servidor) {
+            const area = document.getElementById('formArea');
+            if (servidorAtivo === servidor) {
+                area.style.display = 'none';
+                servidorAtivo = null;
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
                 return;
             }
-            if (!qtdMoedas || qtdMoedas <= 0) {
-                alert("Informe uma quantidade válida de coins.");
-                return;
-            }
-            if (!nick) {
-                alert("Informe o nick do personagem.");
-                return;
-            }
+            servidorAtivo = servidor;
+            area.style.display = 'block';
+            document.getElementById('nomeServidorTxt').innerText = servidor;
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.getElementById('card-' + servidor).classList.add('active');
 
-            const dadosServidor = precos[servidorAtual];
-            const tipoPreco   = operacaoAtual === "comprar" ? "venda" : "compra";
-            const precoPorMil = dadosServidor[tipoPreco];
-            const valorTotal  = (qtdMoedas / 1000) * precoPorMil;
-            const valorTexto  = "R$ " + valorTotal.toFixed(2).replace(".", ",");
+            const bComprar = document.getElementById('btn-op-comprar');
+            const bVender = document.getElementById('btn-op-vender');
 
-            const textoOperacaoMsg =
-                operacaoAtual === "comprar"
-                    ? "*QUERO COMPRAR COINS*"
-                    : "*QUERO VENDER COINS*";
+            bComprar.disabled = !DADOS[servidor].disponivelVenda;
+            bComprar.innerText = DADOS[servidor].disponivelVenda ? "QUERO COMPRAR COINS" : "Compra suspensa, estou sem estoque";
+            
+            bVender.disabled = !DADOS[servidor].disponivelCompra;
+            bVender.innerText = DADOS[servidor].disponivelCompra ? "QUERO VENDER MINHAS COINS" : "Venda suspensa, estoque abastecido";
 
-            let textoDisponibilidade = "";
-            if (indisponivelAtual) {
-                textoDisponibilidade =
-`\n\n*Aviso do site:* Esta operação está marcada como *indisponível no momento* para este servidor.
-Estou entrando em contato apenas para verificar/combinar disponibilidade.`;
-            }
+            if (DADOS[servidor].disponivelVenda) setOperacao('comprar');
+            else if (DADOS[servidor].disponivelCompra) setOperacao('vender');
+            else operacaoAtiva = null;
 
-            const mensagem =
-`*Olá, Nando!*
-
-${textoOperacaoMsg}
-
-━━━━━━━━━━━━━━
-*Servidor:* ${servidorAtual}
-*Quantidade:* ${qtdMoedas} coins
-*Valor aproximado:* ${valorTexto}
-*Personagem:* ${nick}
-*Pagamento desejado:* ${formaPag}
-━━━━━━━━━━━━━━
-*Condições:*
-- Cotação sujeita à confirmação no momento da negociação.
-- *COMPRA* - Entrega das coins após a confirmação do pagamento (PIX ou combinado).
-- *VENDA* - Vou te passar o Nick para envio da suas Coins.${textoDisponibilidade}
-
-Caso eu já estiver *ONLINE*, te respondo na hora, se eu demorar na resposta, assim que possível te retornarei`;
-
-            const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
-            window.open(url, "_blank");
+            atualizarTudo();
+            setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
         }
 
-        document.querySelectorAll(".btn[data-acao]").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                if (btn.disabled) return;
-                const acao     = e.currentTarget.getAttribute("data-acao");
-                const servidor = e.currentTarget.getAttribute("data-servidor");
-                abrirFormulario(acao, servidor);
+        function setOperacao(op) {
+            operacaoAtiva = op;
+            document.querySelectorAll('.op-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.getAttribute('data-op') === op) btn.classList.add('active');
             });
-        });
+            atualizarTudo();
+        }
 
-        inputQuantidade.addEventListener("input", atualizarResumo);
-        inputNick.addEventListener("input", atualizarResumo);
-        inputPagamento.addEventListener("change", atualizarResumo);
+        function atualizarTudo() {
+            const summary = document.getElementById('summaryBox');
+            const campos = document.getElementById('camposForm');
+            if (!operacaoAtiva) {
+                summary.innerHTML = "<div style='text-align:center; color:#ff6b6b'>Operações suspensas neste servidor.</div>";
+                campos.style.display = "none";
+                return;
+            }
+            campos.style.display = "block";
+            const qtd = parseFloat(document.getElementById('inputQtd').value) || 0;
+            const nick = document.getElementById('inputNick').value || "---";
+            const precoUnitario = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
+            const total = (qtd / 1000) * precoUnitario;
 
-        btnWhatsApp.addEventListener("click", enviarWhatsApp);
-        btnCancelar.addEventListener("click", fecharFormulario);
-        btnFecharForm.addEventListener("click", fecharFormulario);
+            summary.innerHTML = `
+                <div class="summary-line"><span>Operação:</span> <strong style="color:${operacaoAtiva === 'comprar' ? 'var(--green)' : 'var(--orange)'}">${operacaoAtiva === 'comprar' ? 'COMPRA' : 'VENDA'}</strong></div>
+                <div class="summary-line"><span>Total:</span> <strong style="color:var(--gold)">R$ ${total.toFixed(2).replace('.', ',')}</strong></div>
+                <div style="font-size:11px; margin-top:5px; opacity:0.7">Servidor: ${servidorAtivo} | Nick: ${nick}</div>
+            `;
+        }
+
+        function enviarZap() {
+            const qtd = document.getElementById('inputQtd').value;
+            const nick = document.getElementById('inputNick').value;
+            if (!qtd || qtd <= 0) return alert("Informe a quantidade!");
+            if (!nick || nick === "---") return alert("Informe seu Nick!");
+
+            const precoUnitario = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
+            const total = (qtd / 1000) * precoUnitario;
+
+            // Mensagem direta e funcional
+            const texto = `Olá Nando! Quero ${operacaoAtiva === 'comprar' ? 'COMPRAR' : 'VENDER'} coins.%0A%0A` +
+                          `*Servidor:* ${servidorAtivo}%0A` +
+                          `*Quantidade:* ${qtd} coins%0A` +
+                          `*Valor:* R$ ${total.toFixed(2)}%0A` +
+                          `*Nick:* ${nick}`;
+
+            window.open(`https://wa.me/${MEU_WHATSAPP}?text=${texto}`, '_blank');
+        }
     </script>
 </body>
 </html>
