@@ -72,15 +72,23 @@
         }
         .close-btn:hover { opacity: 1; color: var(--gold); }
 
-        .operation-selector { display: flex; gap: 10px; margin: 20px 0; }
+        .operation-selector { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
         .op-btn {
             flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #444;
-            background: transparent; color: #aaa; cursor: pointer;
+            background: transparent; color: #666; cursor: pointer;
             font-weight: bold; transition: 0.3s; font-family: 'Poppins';
             text-transform: uppercase; font-size: 12px;
         }
-        .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); }
-        .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); }
+        .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); opacity: 1; }
+        .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); opacity: 1; }
+        
+        /* Estilo para botão desativado */
+        .op-btn:disabled {
+            cursor: not-allowed;
+            border-style: dashed;
+            opacity: 0.4;
+            background: rgba(0,0,0,0.1);
+        }
 
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 13px; color: var(--gold); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
@@ -203,8 +211,8 @@
             "DeusOT": { 
                 venda: 79.00,             
                 compra: 70.00,            
-                disponivelVenda: true,    
-                disponivelCompra: true    
+                disponivelVenda: true,    // true = você vende para o cliente
+                disponivelCompra: true    // true = você compra do cliente
             },
             "RubinOT": { 
                 venda: 86.00,             
@@ -281,11 +289,27 @@
             
             const bComprar = document.getElementById('btn-op-comprar');
             const bVender = document.getElementById('btn-op-vender');
-            bComprar.disabled = !DADOS[servidor].disponivelVenda;
-            bVender.disabled = !DADOS[servidor].disponivelCompra;
+
+            // Ajuste dos textos e inibição conforme sua solicitação
+            if (!DADOS[servidor].disponivelVenda) {
+                bComprar.disabled = true;
+                bComprar.innerText = "Comprar Coins (Sem estoque)";
+            } else {
+                bComprar.disabled = false;
+                bComprar.innerText = "Comprar Coins";
+            }
+
+            if (!DADOS[servidor].disponivelCompra) {
+                bVender.disabled = true;
+                bVender.innerText = "Vender Coins (Estoque cheio)";
+            } else {
+                bVender.disabled = false;
+                bVender.innerText = "Vender Coins";
+            }
 
             if (DADOS[servidor].disponivelVenda) setOperacao('comprar');
             else if (DADOS[servidor].disponivelCompra) setOperacao('vender');
+            else operacaoAtiva = null;
 
             atualizarTudo();
             setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
@@ -314,7 +338,10 @@
 
         function atualizarTudo() {
             const summary = document.getElementById('summaryBox');
-            if (!operacaoAtiva) return;
+            if (!operacaoAtiva) {
+                summary.innerHTML = `<div style="text-align:center; padding: 10px; color:#ffbaba; font-size:14px;">Serviço indisponível no momento para este servidor.</div>`;
+                return;
+            }
             const qtd = parseFloat(document.getElementById('inputQtd').value) || 0;
             const nick = document.getElementById('inputNick').value || "...";
             const precoUnitario = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
@@ -329,6 +356,7 @@
         }
 
         function enviarZap() {
+            if (!operacaoAtiva) return alert("Esta operação não está disponível.");
             const qtdInput = document.getElementById('inputQtd').value;
             const nick = document.getElementById('inputNick').value;
             if (!qtdInput || qtdInput <= 0 || !nick || nick.length < 2) return alert("Preencha todos os campos corretamente.");
