@@ -169,7 +169,7 @@
             <div class="form-group">
                 <label>Indicado por (Opcional)</label>
                 <select id="inputIndicacao" onchange="atualizarTudo()">
-                    <option value="">Grupo Whats</option>
+                    <option value="Grupo Whats">Grupo Whats</option>
                 </select>
             </div>
 
@@ -186,6 +186,9 @@
 
     <footer>
         <p>© Nando Coins - Todos os direitos reservados.</p>
+        <p style="font-size: 10px; margin-top: 10px; opacity: 0.7;">
+            Este site não possui vínculo ou patrocínio oficial com os servidores DeusOT ou RubinOT.
+        </p>
     </footer>
 
     <script>
@@ -193,16 +196,15 @@
            ||                     PAINEL DE CONTROLE (EDITE AQUI)                 ||
            ========================================================================== */
 
-        const MEU_WHATSAPP = "5511966542013"; //
-        const ESTOU_ONLINE = true;          // true = Online | false = Offline
+        const MEU_WHATSAPP = "5511966542013"; 
+        const ESTOU_ONLINE = true;          
 
-        // 1. PREÇOS E DISPONIBILIDADE
         const DADOS = {
             "DeusOT": { 
-                venda: 79.00,             // Preço quando você vende
-                compra: 70.00,            // Preço quando você compra
-                disponivelVenda: true,    // Tem estoque?
-                disponivelCompra: true    // Está comprando?
+                venda: 79.00,             
+                compra: 70.00,            
+                disponivelVenda: true,    
+                disponivelCompra: true    
             },
             "RubinOT": { 
                 venda: 86.00, 
@@ -212,8 +214,6 @@
             }
         };
 
-        // 2. LISTA DE STREAMERS PARCEIROS
-        // Coloque as fotos na mesma pasta do site e escreva o nome do arquivo no 'avatar'
         const PARCEIROS = [
 			{ 
                 nome: "Nando Coins", 
@@ -239,7 +239,7 @@
         ];
 
         /* ==========================================================================
-           ||                FIM DO PAINEL (NÃO MEXA ABAIXO DISSO)                ||
+           ||                FIM DO PAINEL                                       ||
            ========================================================================== */
 
         function inicializarParceiros() {
@@ -322,19 +322,28 @@
             const qtd = document.getElementById('inputQtd').value;
             const nick = document.getElementById('inputNick').value;
             const ind = document.getElementById('inputIndicacao').value || "Direto pelo site";
+            
             if(!qtd || !nick) return alert("Preencha todos os campos antes de enviar!");
             
             const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
             const total = (parseFloat(qtd) / 1000) * preco;
+            
+            const agora = new Date();
+            const dataHora = agora.toLocaleDateString('pt-BR') + ", " + agora.toLocaleTimeString('pt-BR');
 
-            const msg = `*--- PEDIDO NANDO COINS ---*%0A` +
-                        `*Operação:* ${operacaoAtiva.toUpperCase()}%0A` +
-                        `*Servidor:* ${servidorAtivo}%0A` +
-                        `*Quantidade:* ${qtd} Coins%0A` +
-                        `*Nick:* ${nick}%0A` +
-                        `*Indicação:* ${ind}%0A` +
-                        `*TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
-                        `----------------------------`;
+            const msg = 
+                `--- _*PEDIDO NANDO COINS*_ ---%0A` +
+                `*Data:* ${dataHora}%0A` +
+                `----------------------------%0A` +
+                `*Operação:* Quero ${operacaoAtiva.toUpperCase()}%0A` +
+                `*Servidor:* ${servidorAtivo}%0A` +
+                `*Quantidade:* ${qtd} Coins%0A` +
+                `*Nick:* ${nick}%0A` +
+                `*Indicação:* ${ind}%0A` +
+                `----------------------------%0A` +
+                `*VALOR TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
+                `----------------------------%0A` +
+                `_Favor aguardar a resposta para o PIX_`;
 
             window.open(`https://wa.me/${MEU_WHATSAPP}?text=${msg}`, '_blank');
         }
