@@ -14,6 +14,9 @@
         :root {
             --gold: #ffd369;
             --green: #00c853;
+            --kick: #53fc18;
+            --twitch: #a970ff;
+            --youtube: #ff0000;
             --orange: #ffb74d;
             --red: #ff4b4b;
             --dark-card: #2c343f;
@@ -51,7 +54,6 @@
 
         .card:hover { transform: translateY(-8px); border-color: var(--gold); }
         .card.active { border-color: var(--gold); background: #343c48; box-shadow: 0 0 20px rgba(255,211,105,0.2); }
-        .card.active::after { content: '✓'; position: absolute; top: 10px; right: 15px; color: var(--gold); font-weight: bold; font-size: 20px; }
         
         .card img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px; }
         .card h2 { margin: 0; color: var(--gold); font-size: 24px; }
@@ -70,32 +72,22 @@
             font-size: 24px; color: #fff; cursor: pointer;
             opacity: 0.6; transition: 0.3s; font-weight: bold;
         }
-        .close-btn:hover { opacity: 1; color: var(--gold); }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; color: var(--gold); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444;
+            background: var(--input-bg); color: white; box-sizing: border-box; outline: none; font-size: 16px;
+        }
 
         .operation-selector { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
         .op-btn {
             flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #444;
             background: transparent; color: #666; cursor: pointer;
-            font-weight: bold; transition: 0.3s; font-family: 'Poppins';
-            text-transform: uppercase; font-size: 12px;
+            font-weight: bold; transition: 0.3s; text-transform: uppercase; font-size: 12px;
         }
-        .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); opacity: 1; }
-        .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); opacity: 1; }
-        
-        /* Estilo para botão desativado */
-        .op-btn:disabled {
-            cursor: not-allowed;
-            border-style: dashed;
-            opacity: 0.4;
-            background: rgba(0,0,0,0.1);
-        }
-
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 13px; color: var(--gold); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
-        .form-group input {
-            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444;
-            background: var(--input-bg); color: white; box-sizing: border-box; outline: none; font-size: 16px;
-        }
+        .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); }
+        .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); }
 
         .summary-box { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
@@ -108,41 +100,31 @@
             font-size: 16px; transition: 0.3s; text-transform: uppercase;
         }
 
-        /* BOTÃO FLUTUANTE DO WHATSAPP */
-        .float-zap {
-            position: fixed; bottom: 20px; right: 20px; background: #25d366;
-            width: 60px; height: 60px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 9999; transition: transform 0.3s ease;
+        .streamers-section { max-width: 900px; margin: 60px auto 20px; padding: 0 20px; text-align: center; }
+        .streamers-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 25px; }
+        .streamer-card {
+            background: var(--dark-card); padding: 15px; border-radius: 18px;
+            color: white; width: 160px; transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center;
         }
-        .float-zap:hover { transform: scale(1.1); }
-
-        #notification-box {
-            position: fixed; bottom: 20px; left: 20px; background: var(--dark-card);
-            padding: 12px 18px; border-radius: 15px; border: 1px solid var(--gold);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000;
-            display: flex; align-items: center; gap: 12px;
-            transform: translateX(-150%); transition: 0.5s ease;
-            max-width: 280px;
+        .streamer-avatar { width: 75px; height: 75px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #444; object-fit: cover; background: #1e242c; }
+        .streamer-name { font-weight: 600; font-size: 14px; margin-bottom: 10px; color: var(--gold); }
+        
+        .platforms-container { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+        .platform-link {
+            text-decoration: none; font-size: 10px; font-weight: bold; padding: 5px 10px; 
+            border-radius: 20px; transition: 0.2s; border: 1px solid transparent;
         }
-        #notification-box.show { transform: translateX(0); }
-        .notif-text { font-size: 12px; line-height: 1.4; color: #ddd; }
-        .notif-text b { color: var(--gold); }
+        .platform-link:hover { transform: scale(1.1); filter: brightness(1.2); }
 
-        footer { text-align: center; margin-top: 60px; padding: 30px 20px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .disclaimer { font-size: 11px; opacity: 0.5; max-width: 600px; margin: 0 auto 5px; line-height: 1.4; color: #ccc; }
+        .link-twitch { background: rgba(169, 112, 255, 0.2); color: var(--twitch); border-color: var(--twitch); }
+        .link-kick { background: rgba(83, 252, 24, 0.1); color: var(--kick); border-color: var(--kick); }
+        .link-youtube { background: rgba(255, 0, 0, 0.1); color: var(--youtube); border-color: var(--youtube); }
+
+        footer { text-align: center; margin-top: 40px; padding: 30px 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: #888; }
     </style>
 </head>
 <body onclick="fecharAoClicarFora(event)">
-
-    <div id="notification-box">
-        <div class="notif-icon" id="notif-icon" style="font-size: 20px;"></div>
-        <div class="notif-text" id="notif-text"></div>
-    </div>
-
-    <a href="https://wa.me/5511966542013" class="float-zap" target="_blank">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="35" alt="Suporte WhatsApp">
-    </a>
 
     <div class="header">
         <img src="LogoNandoCoins.png" alt="Nando Coins">
@@ -174,156 +156,138 @@
                 <button class="op-btn" id="btn-op-vender" data-op="vender" onclick="setOperacao('vender')">Vender Coins</button>
             </div>
 
-            <div id="camposForm">
-                <div class="form-group">
-                    <label>Quantidade de Coins</label>
-                    <input type="number" id="inputQtd" inputmode="numeric" placeholder="Ex: 1000" oninput="atualizarTudo()">
-                </div>
+            <div class="form-group">
+                <label>Quantidade de Coins</label>
+                <input type="number" id="inputQtd" placeholder="Ex: 1000" oninput="atualizarTudo()">
+            </div>
 
-                <div class="form-group">
-                    <label>Seu Nick no Jogo</label>
-                    <input type="text" id="inputNick" placeholder="Nome exato do personagem" oninput="validarNick(this)">
-                </div>
+            <div class="form-group">
+                <label>Seu Nick no Jogo</label>
+                <input type="text" id="inputNick" placeholder="Nome do personagem" oninput="atualizarTudo()">
+            </div>
+
+            <div class="form-group">
+                <label>Indicado por (Opcional)</label>
+                <select id="inputIndicacao" onchange="atualizarTudo()">
+                    <option value="">Ninguém</option>
+                </select>
             </div>
 
             <div class="summary-box" id="summaryBox"></div>
 
-            <button class="whatsapp-btn" id="btnZapFinal" onclick="enviarZap()">
-                Enviar Pedido via WhatsApp
-            </button>
+            <button class="whatsapp-btn" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
         </div>
     </div>
 
+    <div class="streamers-section">
+        <h3 style="color: var(--gold);">Streamers Parceiros</h3>
+        <div class="streamers-grid" id="listaStreamers"></div>
+    </div>
+
     <footer>
-        <p class="disclaimer">Este site não é afiliado nem patrocinado pelo servidor Oficial do RubinOT ou DeusOT. Uso apenas para negociação informal de Coins.</p>
-        <p class="disclaimer">Contato direto: <a href="https://wa.me/5511966542013" target="_blank" style="color:var(--gold)">WhatsApp Nando Coins</a></p>
+        <p>© Nando Coins - Todos os direitos reservados.</p>
     </footer>
 
     <script>
         /* ==========================================================================
-           PAINEL DE CONTROLE - ALTERE SUAS INFORMAÇÕES AQUI
+           ||                     PAINEL DE CONTROLE (EDITE AQUI)                 ||
            ========================================================================== */
-        
-        const MEU_WHATSAPP = "5511966542013"; 
-        const ESTOU_ONLINE = true;          
 
+        const MEU_WHATSAPP = "5511966542013"; //
+        const ESTOU_ONLINE = true;          // true = Online | false = Offline
+
+        // 1. PREÇOS E DISPONIBILIDADE
         const DADOS = {
             "DeusOT": { 
-                venda: 79.00,             
-                compra: 70.00,            
-                disponivelVenda: true,    // true = você vende para o cliente
-                disponivelCompra: true    // true = você compra do cliente
+                venda: 79.00,             // Preço quando você vende
+                compra: 70.00,            // Preço quando você compra
+                disponivelVenda: true,    // Tem estoque?
+                disponivelCompra: true    // Está comprando?
             },
             "RubinOT": { 
-                venda: 86.00,             
-                compra: 81.00,            
-                disponivelVenda: true,    
-                disponivelCompra: false    
+                venda: 86.00, 
+                compra: 81.00, 
+                disponivelVenda: true, 
+                disponivelCompra: false 
             }
         };
 
+        // 2. LISTA DE STREAMERS PARCEIROS
+        // Coloque as fotos na mesma pasta do site e escreva o nome do arquivo no 'avatar'
+        const PARCEIROS = [
+            { 
+                nome: "Hussel", 
+                avatar: "logohussel.jpg", 
+                links: { 
+                    twitch: "https://www.twitch.tv/tvhussel",
+                } 
+            },
+            { 
+                nome: "JapaBigodin", 
+                avatar: "logojapa.jpeg", 
+                links: { 
+                    twitch: "https://www.twitch.tv/japabigodin" 
+                } 
+            }
+        ];
+
         /* ==========================================================================
-           FIM DO PAINEL DE CONTROLE 
+           ||                FIM DO PAINEL (NÃO MEXA ABAIXO DISSO)                ||
            ========================================================================== */
 
-        function formatarValorK(qtd) {
-            qtd = parseFloat(qtd);
-            if (qtd >= 1000) return (qtd / 1000) + "k";
-            return qtd;
+        function inicializarParceiros() {
+            const select = document.getElementById('inputIndicacao');
+            const grid = document.getElementById('listaStreamers');
+            PARCEIROS.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.nome; opt.innerText = p.nome;
+                select.appendChild(opt);
+
+                let linksHTML = "";
+                if(p.links.twitch) linksHTML += `<a href="${p.links.twitch}" target="_blank" class="platform-link link-twitch">Twitch</a>`;
+                if(p.links.kick) linksHTML += `<a href="${p.links.kick}" target="_blank" class="platform-link link-kick">Kick</a>`;
+                if(p.links.youtube) linksHTML += `<a href="${p.links.youtube}" target="_blank" class="platform-link link-youtube">YouTube</a>`;
+
+                grid.innerHTML += `
+                    <div class="streamer-card">
+                        <img src="${p.avatar}" class="streamer-avatar" onerror="this.src='https://via.placeholder.com/75?text=Foto'">
+                        <span class="streamer-name">${p.nome}</span>
+                        <div class="platforms-container">${linksHTML}</div>
+                    </div>`;
+            });
         }
+        inicializarParceiros();
 
-        function mostrarNotificacao() {
-            if(!ESTOU_ONLINE) return;
-
-            const notif = document.getElementById('notification-box');
-            const servidor = ["DeusOT", "RubinOT"][Math.floor(Math.random() * 2)];
-            let qtd;
-            if (Math.random() < 0.7) {
-                qtd = (Math.floor(Math.random() * 9) + 1) * 100;
-                if(Math.random() < 0.2) qtd += 25;
-            } else {
-                qtd = (Math.floor(Math.random() * 3) + 2) * 1000;
-                if(Math.random() < 0.2) qtd += 500;
-            }
-
-            const tipo = Math.random() > 0.5 ? "venda realizada" : "nova compra";
-            const icon = tipo.includes("venda") ? "✅" : "💰"; 
-            const tempos = ["agora mesmo", "há 2 minutos", "há 5 minutos"];
-            const tempoSorteado = tempos[Math.floor(Math.random() * tempos.length)];
-
-            document.getElementById('notif-icon').innerText = icon;
-            document.getElementById('notif-text').innerHTML = `+1 ${tipo} no <b>${servidor}</b><br>Montante: <b>${formatarValorK(qtd)} Coins</b> (${tempoSorteado})`;
-
-            notif.classList.add('show');
-            setTimeout(() => { notif.classList.remove('show'); }, 5000);
-
-            const proximoTempo = (Math.floor(Math.random() * 9) + 1) * 60000;
-            setTimeout(mostrarNotificacao, proximoTempo);
-        }
-
-        setTimeout(mostrarNotificacao, 10000);
-
-        let servidorAtivo = null;
-        let operacaoAtiva = null; 
-
+        let servidorAtivo = null; let operacaoAtiva = null;
         const barraStatus = document.getElementById('statusBarr');
-        if(ESTOU_ONLINE) {
-            barraStatus.innerHTML = "📡 STATUS: ONLINE - Atendimento imediato disponível!";
-            barraStatus.className = "notice-bar status-online";
-        } else {
-            barraStatus.innerHTML = "💤 STATUS: OFFLINE - Responderei em breve!";
-            barraStatus.className = "notice-bar status-offline";
-        }
+        barraStatus.innerHTML = ESTOU_ONLINE ? "📡 STATUS: ONLINE - Atendimento imediato disponível!" : "💤 STATUS: OFFLINE - Responderei em breve!";
+        barraStatus.className = "notice-bar " + (ESTOU_ONLINE ? "status-online" : "status-offline");
 
         document.getElementById('info-DeusOT').innerHTML = `Venda: R$ ${DADOS.DeusOT.venda.toFixed(2)} | Compra: R$ ${DADOS.DeusOT.compra.toFixed(2)}`;
         document.getElementById('info-RubinOT').innerHTML = `Venda: R$ ${DADOS.RubinOT.venda.toFixed(2)} | Compra: R$ ${DADOS.RubinOT.compra.toFixed(2)}`;
 
         function toggleServidor(servidor, event) {
             event.stopPropagation();
-            if (servidorAtivo === servidor) { fecharJanela(); return; }
             servidorAtivo = servidor;
-            const area = document.getElementById('formArea');
-            area.style.display = 'block';
+            document.getElementById('formArea').style.display = 'block';
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             document.getElementById('card-' + servidor).classList.add('active');
             
             const bComprar = document.getElementById('btn-op-comprar');
             const bVender = document.getElementById('btn-op-vender');
+            bComprar.disabled = !DADOS[servidor].disponivelVenda;
+            bVender.disabled = !DADOS[servidor].disponivelCompra;
 
-            // Ajuste dos textos e inibição conforme sua solicitação
-            if (!DADOS[servidor].disponivelVenda) {
-                bComprar.disabled = true;
-                bComprar.innerText = "Comprar Coins (Sem estoque)";
-            } else {
-                bComprar.disabled = false;
-                bComprar.innerText = "Comprar Coins";
-            }
-
-            if (!DADOS[servidor].disponivelCompra) {
-                bVender.disabled = true;
-                bVender.innerText = "Vender Coins (Estoque cheio)";
-            } else {
-                bVender.disabled = false;
-                bVender.innerText = "Vender Coins";
-            }
-
-            if (DADOS[servidor].disponivelVenda) setOperacao('comprar');
-            else if (DADOS[servidor].disponivelCompra) setOperacao('vender');
-            else operacaoAtiva = null;
-
-            atualizarTudo();
-            setTimeout(() => { area.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+            setOperacao(DADOS[servidor].disponivelVenda ? 'comprar' : 'vender');
+            setTimeout(() => { document.getElementById('formArea').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
         }
 
         function fecharJanela() {
-            servidorAtivo = null;
-            document.getElementById('formArea').style.display = 'none';
+            servidorAtivo = null; document.getElementById('formArea').style.display = 'none';
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         }
 
-        function fecharAoClicarFora(event) {
-            if (servidorAtivo && !document.getElementById('formArea').contains(event.target)) { fecharJanela(); }
-        }
+        function fecharAoClicarFora(event) { if (servidorAtivo && !document.getElementById('formArea').contains(event.target)) fecharJanela(); }
 
         function setOperacao(op) {
             operacaoAtiva = op;
@@ -331,56 +295,39 @@
             atualizarTudo();
         }
 
-        function validarNick(el) {
-            el.value = el.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, ""); 
-            atualizarTudo();
-        }
-
         function atualizarTudo() {
             const summary = document.getElementById('summaryBox');
-            if (!operacaoAtiva) {
-                summary.innerHTML = `<div style="text-align:center; padding: 10px; color:#ffbaba; font-size:14px;">Serviço indisponível no momento para este servidor.</div>`;
-                return;
-            }
+            if (!servidorAtivo) return;
             const qtd = parseFloat(document.getElementById('inputQtd').value) || 0;
             const nick = document.getElementById('inputNick').value || "...";
-            const precoUnitario = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
-            const total = (qtd / 1000) * precoUnitario;
+            const ind = document.getElementById('inputIndicacao').value || "Nenhuma";
+            const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
+            const total = (qtd / 1000) * preco;
 
             summary.innerHTML = `
-                <div class="summary-line"><span>Servidor:</span> <strong>${servidorAtivo}</strong></div>
-                <div class="summary-line"><span>Operação:</span> <strong style="color:${operacaoAtiva === 'comprar' ? 'var(--green)' : 'var(--orange)'}">${operacaoAtiva === 'comprar' ? 'COMPRA' : 'VENDA'}</strong></div>
+                <div class="summary-line"><span>Operação:</span> <strong>${operacaoAtiva.toUpperCase()}</strong></div>
                 <div class="summary-line"><span>Nick:</span> <strong>${nick}</strong></div>
-                <div class="summary-line total-line"><span>Total:</span> <span>R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span></div>
-            `;
+                <div class="summary-line"><span>Indicação:</span> <strong>${ind}</strong></div>
+                <div class="summary-line total-line"><span>Total:</span> <span>R$ ${total.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span></div>`;
         }
 
         function enviarZap() {
-            if (!operacaoAtiva) return alert("Esta operação não está disponível.");
-            const qtdInput = document.getElementById('inputQtd').value;
+            const qtd = document.getElementById('inputQtd').value;
             const nick = document.getElementById('inputNick').value;
-            if (!qtdInput || qtdInput <= 0 || !nick || nick.length < 2) return alert("Preencha todos os campos corretamente.");
+            const ind = document.getElementById('inputIndicacao').value || "Direto pelo site";
+            if(!qtd || !nick) return alert("Preencha todos os campos antes de enviar!");
             
-            if (!ESTOU_ONLINE && !confirm("Estou offline no momento. Deseja enviar mesmo assim?")) return;
-
-            const qtdFormatada = formatarValorK(qtdInput);
-            const precoUnitario = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
-            const total = (parseFloat(qtdInput) / 1000) * precoUnitario;
-            const dataHora = new Date().toLocaleString('pt-BR');
-
-            const acao = operacaoAtiva === 'comprar' ? 'Quero COMPRAR' : 'Quero VENDER';
+            const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
+            const total = (parseFloat(qtd) / 1000) * preco;
 
             const msg = `*--- PEDIDO NANDO COINS ---*%0A` +
-                        `*Data:* ${dataHora}%0A` +
-                        `----------------------------%0A` +
-                        `*Operação:* ${acao}%0A` +
+                        `*Operação:* ${operacaoAtiva.toUpperCase()}%0A` +
                         `*Servidor:* ${servidorAtivo}%0A` +
-                        `*Quantidade:* ${qtdFormatada} Coins%0A` +
+                        `*Quantidade:* ${qtd} Coins%0A` +
                         `*Nick:* ${nick}%0A` +
-                        `----------------------------%0A` +
-                        `*VALOR TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
-                        `----------------------------%0A` +
-                        `_Favor aguardar a resposta para o PIX_`;
+                        `*Indicação:* ${ind}%0A` +
+                        `*TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
+                        `----------------------------`;
 
             window.open(`https://wa.me/${MEU_WHATSAPP}?text=${msg}`, '_blank');
         }
