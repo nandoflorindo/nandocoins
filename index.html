@@ -88,6 +88,9 @@
         }
         .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); }
         .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); }
+        
+        /* Estilo para botão desativado */
+        .op-btn:disabled { opacity: 0.4; cursor: not-allowed; border-style: dashed; }
 
         .summary-box { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
@@ -175,7 +178,7 @@
 
             <div class="summary-box" id="summaryBox"></div>
 
-            <button class="whatsapp-btn" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
+            <button class="whatsapp-btn" id="btnZap" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
         </div>
     </div>
 
@@ -203,8 +206,8 @@
             "DeusOT": { 
                 venda: 79.00,             
                 compra: 70.00,            
-                disponivelVenda: true,    
-                disponivelCompra: true    
+                disponivelVenda: true,    // Comprar do Nando
+                disponivelCompra: false    // Vender para o Nando
             },
             "RubinOT": { 
                 venda: 86.00, 
@@ -270,8 +273,11 @@
         barraStatus.innerHTML = ESTOU_ONLINE ? "📡 STATUS: ONLINE - Atendimento imediato disponível!" : "💤 STATUS: OFFLINE - Responderei em breve!";
         barraStatus.className = "notice-bar " + (ESTOU_ONLINE ? "status-online" : "status-offline");
 
-        document.getElementById('info-DeusOT').innerHTML = `Venda: R$ ${DADOS.DeusOT.venda.toFixed(2)} | Compra: R$ ${DADOS.DeusOT.compra.toFixed(2)}`;
-        document.getElementById('info-RubinOT').innerHTML = `Venda: R$ ${DADOS.RubinOT.venda.toFixed(2)} | Compra: R$ ${DADOS.RubinOT.compra.toFixed(2)}`;
+        function atualizarPrecosCards() {
+            document.getElementById('info-DeusOT').innerHTML = `Venda: R$ ${DADOS.DeusOT.venda.toFixed(2)} | Compra: R$ ${DADOS.DeusOT.compra.toFixed(2)}`;
+            document.getElementById('info-RubinOT').innerHTML = `Venda: R$ ${DADOS.RubinOT.venda.toFixed(2)} | Compra: R$ ${DADOS.RubinOT.compra.toFixed(2)}`;
+        }
+        atualizarPrecosCards();
 
         function toggleServidor(servidor, event) {
             event.stopPropagation();
@@ -282,6 +288,11 @@
             
             const bComprar = document.getElementById('btn-op-comprar');
             const bVender = document.getElementById('btn-op-vender');
+            
+            // Texto dinâmico conforme sua solicitação
+            bComprar.innerText = DADOS[servidor].disponivelVenda ? "Comprar Coins" : "Sem Estoque";
+            bVender.innerText = DADOS[servidor].disponivelCompra ? "Vender Coins" : "Estoque Abastecido";
+
             bComprar.disabled = !DADOS[servidor].disponivelVenda;
             bVender.disabled = !DADOS[servidor].disponivelCompra;
 
