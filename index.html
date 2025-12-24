@@ -14,10 +14,7 @@
         :root {
             --gold: #ffd369;
             --green: #00c853;
-            --kick: #53fc18;
             --twitch: #a970ff;
-            --youtube: #ff0000;
-            --orange: #ffb74d;
             --red: #ff4b4b;
             --dark-card: #2c343f;
             --bg: #1a1e23;
@@ -87,9 +84,7 @@
             font-weight: bold; transition: 0.3s; text-transform: uppercase; font-size: 12px;
         }
         .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); }
-        .op-btn.active[data-op="vender"] { background: var(--orange); color: #222; border-color: var(--orange); }
-        
-        /* Estilo para botão desativado */
+        .op-btn.active[data-op="vender"] { background: #ffb74d; color: #222; border-color: #ffb74d; }
         .op-btn:disabled { opacity: 0.4; cursor: not-allowed; border-style: dashed; }
 
         .summary-box { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
@@ -103,6 +98,16 @@
             font-size: 16px; transition: 0.3s; text-transform: uppercase;
         }
 
+        .wpp-float {
+            position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px;
+            background-color: #25d366; border-radius: 50px; text-align: center;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.5); z-index: 999;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .wpp-float img { width: 35px; height: 35px; }
+        .wpp-float:hover { transform: scale(1.1); background-color: #128c7e; }
+
         .streamers-section { max-width: 900px; margin: 60px auto 20px; padding: 0 20px; text-align: center; }
         .streamers-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 25px; }
         .streamer-card {
@@ -113,21 +118,20 @@
         .streamer-avatar { width: 75px; height: 75px; border-radius: 50%; margin-bottom: 10px; border: 2px solid #444; object-fit: cover; background: #1e242c; }
         .streamer-name { font-weight: 600; font-size: 14px; margin-bottom: 10px; color: var(--gold); }
         
-        .platforms-container { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
-        .platform-link {
-            text-decoration: none; font-size: 10px; font-weight: bold; padding: 5px 10px; 
-            border-radius: 20px; transition: 0.2s; border: 1px solid transparent;
+        /* Ajuste do ícone da Twitch */
+        .twitch-icon {
+            width: 30px; height: 30px; transition: 0.3s; filter: drop-shadow(0 0 5px rgba(169, 112, 255, 0.4));
         }
-        .platform-link:hover { transform: scale(1.1); filter: brightness(1.2); }
-
-        .link-twitch { background: rgba(169, 112, 255, 0.2); color: var(--twitch); border-color: var(--twitch); }
-        .link-kick { background: rgba(83, 252, 24, 0.1); color: var(--kick); border-color: var(--kick); }
-        .link-youtube { background: rgba(255, 0, 0, 0.1); color: var(--youtube); border-color: var(--youtube); }
+        .twitch-icon:hover { transform: scale(1.2); filter: brightness(1.2); }
 
         footer { text-align: center; margin-top: 40px; padding: 30px 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: #888; }
     </style>
 </head>
 <body onclick="fecharAoClicarFora(event)">
+
+    <a href="https://wa.me/5511966542013?text=Olá, estou com dúvidas, me ajuda?" class="wpp-float" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    </a>
 
     <div class="header">
         <img src="LogoNandoCoins.png" alt="Nando Coins">
@@ -178,7 +182,7 @@
 
             <div class="summary-box" id="summaryBox"></div>
 
-            <button class="whatsapp-btn" id="btnZap" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
+            <button class="whatsapp-btn" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
         </div>
     </div>
 
@@ -196,7 +200,7 @@
 
     <script>
         /* ==========================================================================
-           ||                     PAINEL DE CONTROLE (EDITE AQUI)                 ||
+           ||                 PAINEL DE CONTROLE - ALTE TUDO AQUI                 ||
            ========================================================================== */
 
         const MEU_WHATSAPP = "5511966542013"; 
@@ -206,8 +210,8 @@
             "DeusOT": { 
                 venda: 79.00,             
                 compra: 70.00,            
-                disponivelVenda: true,    // Comprar do Nando
-                disponivelCompra: false    // Vender para o Nando
+                disponivelVenda: true,    // true = Liberado | false = "Sem estoque"
+                disponivelCompra: false   // true = Liberado | false = "Estoque abastecido"
             },
             "RubinOT": { 
                 venda: 86.00, 
@@ -221,28 +225,22 @@
 			{ 
                 nome: "Nando Coins", 
                 avatar: "logottw.png", 
-                links: { 
-                    twitch: "https://www.twitch.tv/tvnandin_" 
-                } 
+                links: { twitch: "https://www.twitch.tv/tvnandin_" } 
             },
             { 
                 nome: "Hussel", 
                 avatar: "logohussel.jpg", 
-                links: { 
-                    twitch: "https://www.twitch.tv/tvhussel",
-                } 
+                links: { twitch: "https://www.twitch.tv/tvhussel" } 
             },
             { 
                 nome: "JapaBigodin", 
                 avatar: "logojapa.jpeg", 
-                links: { 
-                    twitch: "https://www.twitch.tv/japabigodin" 
-                } 
+                links: { twitch: "https://www.twitch.tv/japabigodin" } 
             }	
         ];
 
         /* ==========================================================================
-           ||                FIM DO PAINEL                                       ||
+           ||                FIM DO PAINEL - NÃO ALTERAR ABAIXO                  ||
            ========================================================================== */
 
         function inicializarParceiros() {
@@ -254,9 +252,12 @@
                 select.appendChild(opt);
 
                 let linksHTML = "";
-                if(p.links.twitch) linksHTML += `<a href="${p.links.twitch}" target="_blank" class="platform-link link-twitch">Twitch</a>`;
-                if(p.links.kick) linksHTML += `<a href="${p.links.kick}" target="_blank" class="platform-link link-kick">Kick</a>`;
-                if(p.links.youtube) linksHTML += `<a href="${p.links.youtube}" target="_blank" class="platform-link link-youtube">YouTube</a>`;
+                if(p.links.twitch) {
+                    linksHTML += `
+                        <a href="${p.links.twitch}" target="_blank">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Twitch_Glitch_Logo_Purple.svg" class="twitch-icon" alt="Twitch">
+                        </a>`;
+                }
 
                 grid.innerHTML += `
                     <div class="streamer-card">
@@ -289,7 +290,6 @@
             const bComprar = document.getElementById('btn-op-comprar');
             const bVender = document.getElementById('btn-op-vender');
             
-            // Texto dinâmico conforme sua solicitação
             bComprar.innerText = DADOS[servidor].disponivelVenda ? "Comprar Coins" : "Sem Estoque";
             bVender.innerText = DADOS[servidor].disponivelCompra ? "Vender Coins" : "Estoque Abastecido";
 
@@ -339,13 +339,8 @@
             const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
             const total = (parseFloat(qtd) / 1000) * preco;
             
-            const agora = new Date();
-            const dataHora = agora.toLocaleDateString('pt-BR') + ", " + agora.toLocaleTimeString('pt-BR');
-
             const msg = 
                 `--- _*PEDIDO NANDO COINS*_ ---%0A` +
-                `*Data:* ${dataHora}%0A` +
-                `----------------------------%0A` +
                 `*Operação:* Quero ${operacaoAtiva.toUpperCase()}%0A` +
                 `*Servidor:* ${servidorAtivo}%0A` +
                 `*Quantidade:* ${qtd} Coins%0A` +
