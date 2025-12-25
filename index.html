@@ -16,9 +16,10 @@
             --green: #00c853;
             --twitch: #a970ff;
             --red: #ff4b4b;
-            --dark-card: #2c343f;
-            --bg: #1a1e23;
+            --dark-card: rgba(44, 52, 63, 0.8);
+            --bg: #121418;
             --input-bg: #1e242c;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         body {
@@ -28,9 +29,9 @@
             scroll-behavior: smooth;
         }
 
-        .ticker-wrapper { background: rgba(0,0,0,0.4); border-bottom: 1px solid rgba(255,211,105,0.1); overflow: hidden; white-space: nowrap; padding: 12px 0; display: flex; }
+        .ticker-wrapper { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border-bottom: 1px solid var(--glass); overflow: hidden; white-space: nowrap; padding: 12px 0; display: flex; }
         .ticker-content { display: inline-block; padding-left: 100%; animation: ticker 40s linear infinite; }
-        .ticker-item { display: inline-block; padding: 0 50px; text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px; color: var(--gold); font-weight: 600; }
+        .ticker-item { display: inline-block; padding: 0 50px; text-transform: uppercase; letter-spacing: 1.5px; font-size: 11px; color: var(--gold); font-weight: 600; }
         @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         .header { text-align: center; padding: 30px 10px; max-width: 1000px; margin: 0 auto; }
@@ -40,7 +41,7 @@
         .status-online { background: rgba(0, 200, 83, 0.1); border-color: var(--green); color: #afffcd; }
         .status-offline { background: rgba(255, 75, 75, 0.1); border-color: var(--red); color: #ffbaba; }
 
-        .order-notification { position: fixed; bottom: 20px; left: 20px; background: rgba(44, 52, 63, 0.95); backdrop-filter: blur(10px); padding: 8px 15px; border-radius: 15px; border-left: 3px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: 0.5s; transform: translateX(-180%); max-width: 220px; }
+        .order-notification { position: fixed; bottom: 20px; left: 20px; background: rgba(30, 36, 44, 0.9); backdrop-filter: blur(15px); padding: 8px 15px; border-radius: 15px; border: 1px solid var(--glass); border-left: 3px solid var(--gold); box-shadow: 0 5px 20px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; z-index: 1000; transition: 0.5s; transform: translateX(-180%); max-width: 220px; }
         .order-notification.show { transform: translateX(0); }
         .order-notification .text { font-size: 11px; color: #eee; }
 
@@ -48,35 +49,36 @@
         .badge-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.03); padding: 10px 15px; border-radius: 50px; border: 1px solid rgba(255,211,105,0.1); font-size: 12px; color: #ccc; }
 
         .container { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; padding: 0 20px; }
-        .card { background: var(--dark-card); border-radius: 20px; padding: 25px; width: 280px; text-align: center; transition: 0.3s; border: 2px solid transparent; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); position: relative; }
+        .card { background: var(--dark-card); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; width: 280px; text-align: center; transition: 0.3s; border: 2px solid transparent; cursor: pointer; position: relative; }
         .card:hover { transform: translateY(-8px); border-color: var(--gold); }
-        .card.active { border-color: var(--gold); background: #343c48; box-shadow: 0 0 20px rgba(255,211,105,0.2); }
+        .card.active { border-color: var(--gold); background: rgba(255,211,105,0.1); }
         .card img { width: 100px; height: 100px; object-fit: contain; margin-bottom: 15px; }
         .card h2 { margin: 0; color: var(--gold); font-size: 24px; }
 
-        .form-area { max-width: 550px; margin: 40px auto; padding: 0 20px; display: none; animation: fadeIn 0.4s ease-out; position: relative; }
+        .form-area { max-width: 550px; margin: 40px auto; padding: 0 20px; display: none; animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .form-box { background: var(--dark-card); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative; }
+        .form-box { background: rgba(44, 52, 63, 0.95); backdrop-filter: blur(20px); padding: 30px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.4); position: relative; }
         .close-btn { position: absolute; top: 10px; right: 20px; font-size: 24px; color: #fff; cursor: pointer; opacity: 0.6; transition: 0.3s; font-weight: bold; }
 
-        .form-group { margin-bottom: 20px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group { margin-bottom: 20px; position: relative; }
         .form-group label { display: block; font-size: 13px; color: var(--gold); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
         .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: var(--input-bg); color: white; box-sizing: border-box; outline: none; font-size: 16px; }
+        .form-group input.invalid { border-color: var(--red); box-shadow: 0 0 10px rgba(255, 75, 75, 0.2); }
+        .error-msg { color: var(--red); font-size: 11px; margin-top: 5px; display: none; font-weight: 600; }
 
         .operation-selector { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
         .op-btn { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #444; background: transparent; color: #666; cursor: pointer; font-weight: bold; transition: 0.3s; text-transform: uppercase; font-size: 12px; }
         .op-btn.active[data-op="comprar"] { background: var(--green); color: white; border-color: var(--green); }
         .op-btn.active[data-op="vender"] { background: #ffb74d; color: #222; border-color: #ffb74d; }
-        .op-btn:disabled { opacity: 0.4; cursor: not-allowed; border-style: dashed; }
 
         .summary-box { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
         .total-line { font-size: 24px; font-weight: 700; border-top: 1px solid #444; padding-top: 15px; margin-top: 10px; color: var(--gold); }
 
         .whatsapp-btn { background: #25d366; color: white; width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 16px; transition: 0.3s; text-transform: uppercase; }
-
-        .wpp-float { position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px; background-color: #25d366; border-radius: 50px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .wpp-float { position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px; background-color: #25d366; border-radius: 50px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; }
         .wpp-float img { width: 35px; height: 35px; }
 
         .streamers-section { max-width: 900px; margin: 60px auto 20px; padding: 0 20px; text-align: center; }
@@ -133,7 +135,19 @@
                 <button class="op-btn" id="btn-op-comprar" data-op="comprar" onclick="setOperacao('comprar')">Comprar Coins</button>
                 <button class="op-btn" id="btn-op-vender" data-op="vender" onclick="setOperacao('vender')">Vender Coins</button>
             </div>
-            <div class="form-group"><label>Quantidade de Coins</label><input type="number" id="inputQtd" placeholder="Ex: 1000" oninput="atualizarTudo()"></div>
+            
+            <div class="form-row" id="formRowInputs">
+                <div class="form-group" id="groupQtd" style="grid-column: span 2;">
+                    <label>Quantidade de Coins</label>
+                    <input type="number" id="inputQtd" placeholder="Ex: 1000" oninput="atualizarTudo('qtd')">
+                    <div id="errorQtd" class="error-msg">Use múltiplos de 25</div>
+                </div>
+                <div class="form-group" id="groupReais" style="display: none;">
+                    <label>Quero gastar (R$)</label>
+                    <input type="number" id="inputReais" placeholder="Ex: 50.00" oninput="atualizarTudo('reais')">
+                </div>
+            </div>
+
             <div class="form-group"><label>Seu Nick no Jogo</label><input type="text" id="inputNick" placeholder="Nome do personagem" oninput="atualizarTudo()"></div>
             <div class="form-group"><label>Indicado por (Opcional)</label><select id="inputIndicacao" onchange="atualizarTudo()"></select></div>
             <div class="summary-box" id="summaryBox"></div>
@@ -159,50 +173,27 @@
         const MEU_WHATSAPP = "5511966542013"; 
         const ESTOU_ONLINE = true;          
 
-        // 1. CONFIGURAÇÃO DE PREÇOS E ESTOQUE
         const DADOS = {
-            "DeusOT": { 
-                venda: 79.00,             
-                compra: 70.00,            
-                disponivelVenda: true,    
-                disponivelCompra: true   
-            },
-            "RubinOT": { 
-                venda: 86.00, 
-                compra: 81.00, 
-                disponivelVenda: false, 
-                disponivelCompra: true 
-            }
+            "DeusOT": { venda: 79.00, compra: 70.00, disponivelVenda: true, disponivelCompra: true },
+            "RubinOT": { venda: 86.00, compra: 81.00, disponivelVenda: false, disponivelCompra: true }
         };
 
-        // 2. MENSAGENS DA BARRA NO TOPO (TICKER)
         const NOVIDADES = [
             "DeusOT: Estoque abastecido!", 
             "RubinOT: SEM ESTOQUE!", 
             "O melhor preço SEMPRE!"
         ];
 
-        // 3. PARCEIROS STREAMERS (Imagens locais)
         const PARCEIROS = [
-			{ 
-                nome: "Nando Coins", 
-                avatar: "logottw.png", 
-                links: { twitch: "https://www.twitch.tv/tvnandin_" } 
-            },
-            { 
-                nome: "Hussel", 
-                avatar: "logohussel.jpg", 
-                links: { twitch: "https://www.twitch.tv/tvhussel" } 
-            },
-            { 
-                nome: "JapaBigodin", 
-                avatar: "logojapa.jpeg", 
-                links: { twitch: "https://www.twitch.tv/japabigodin" } 
-            }	
+			{ nome: "Nando Coins", avatar: "logottw.png", links: { twitch: "https://www.twitch.tv/tvnandin_" } },
+            { nome: "Hussel", avatar: "logohussel.jpg", links: { twitch: "https://www.twitch.tv/tvhussel" } },
+            { nome: "JapaBigodin", avatar: "logojapa.jpeg", links: { twitch: "https://www.twitch.tv/japabigodin" } }	
         ];
 
+        const NOMES_FEED = ["L***s", "G***e", "M***o", "K***v", "D***a", "R***h", "A***x", "F***p", "B***u", "J***o"];
+
         /* ==========================================================================
-           ||                FIM DO PAINEL - NÃO ALTERAR ABAIXO                  ||
+           ||                LÓGICA DO SITE - NÃO ALTERAR ABAIXO                  ||
            ========================================================================== */
 
         function inicializar() {
@@ -223,57 +214,83 @@
                 let tw = p.links.twitch ? `<a href="${p.links.twitch}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/Twitch_Glitch_Logo_Purple.svg" class="twitch-icon"></a>` : '';
                 grid.innerHTML += `<div class="streamer-card"><img src="${p.avatar}" class="streamer-avatar" onerror="this.src='https://via.placeholder.com/75'"><span class="streamer-name">${p.nome}</span>${tw}</div>`;
             });
-        }
-        inicializar();
 
-        function formatarCoins(valor) {
-            if (valor < 1000) return valor + " Coins";
-            let k = Math.floor(valor / 1000), resto = valor % 1000;
-            return k + "k" + (resto > 0 ? resto : "") + " Coins";
+            document.getElementById('info-DeusOT').innerHTML = `Venda: R$ ${DADOS.DeusOT.venda.toFixed(2)} | Compra: R$ ${DADOS.DeusOT.compra.toFixed(2)}`;
+            document.getElementById('info-RubinOT').innerHTML = `Venda: R$ ${DADOS.RubinOT.venda.toFixed(2)} | Compra: R$ ${DADOS.RubinOT.compra.toFixed(2)}`;
+            
+            const barraStatus = document.getElementById('statusBarr');
+            barraStatus.innerHTML = ESTOU_ONLINE ? "📡 STATUS: ONLINE - Atendimento imediato!" : "💤 STATUS: OFFLINE - Retorno assim que possível!";
+            barraStatus.className = "notice-bar " + (ESTOU_ONLINE ? "status-online" : "status-offline");
         }
-
-        function showFakeOrder() {
-            if (!ESTOU_ONLINE) return;
-            const servers = ["DeusOT", "RubinOT"], server = servers[Math.floor(Math.random() * servers.length)], type = Math.random() > 0.5 ? "venda" : "compra";
-            let q = Math.random() < 0.75 ? (Math.floor(Math.random() * 91) + 10) * 25 : (Math.floor(Math.random() * 140) + 101) * 25;
-            document.getElementById('orderText').innerHTML = `+1 <b>${type}</b> no servidor <b>${server}</b><br>Quantia: <b>${formatarCoins(q)}</b>`;
-            document.getElementById('orderPop').classList.add('show');
-            setTimeout(() => document.getElementById('orderPop').classList.remove('show'), 5000);
-            setTimeout(showFakeOrder, Math.random() * (900000 - 240000) + 240000);
-        }
-        if (ESTOU_ONLINE) setTimeout(showFakeOrder, 30000);
 
         let servidorAtivo = null, operacaoAtiva = null;
-        const barraStatus = document.getElementById('statusBarr');
-        barraStatus.innerHTML = ESTOU_ONLINE ? "📡 STATUS: ONLINE - Atendimento imediato!" : "💤 STATUS: OFFLINE - Retorno assim que possível!";
-        barraStatus.className = "notice-bar " + (ESTOU_ONLINE ? "status-online" : "status-offline");
-
-        document.getElementById('info-DeusOT').innerHTML = `Venda: R$ ${DADOS.DeusOT.venda.toFixed(2)} | Compra: R$ ${DADOS.DeusOT.compra.toFixed(2)}`;
-        document.getElementById('info-RubinOT').innerHTML = `Venda: R$ ${DADOS.RubinOT.venda.toFixed(2)} | Compra: R$ ${DADOS.RubinOT.compra.toFixed(2)}`;
 
         function toggleServidor(servidor, event) {
             event.stopPropagation(); servidorAtivo = servidor;
             document.getElementById('formArea').style.display = 'block';
             document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
             document.getElementById('card-' + servidor).classList.add('active');
-            document.getElementById('btn-op-comprar').innerText = DADOS[servidor].disponivelVenda ? "Comprar Coins" : "Sem Estoque";
-            document.getElementById('btn-op-vender').innerText = DADOS[servidor].disponivelCompra ? "Vender Coins" : "Estoque Abastecido";
-            document.getElementById('btn-op-comprar').disabled = !DADOS[servidor].disponivelVenda;
-            document.getElementById('btn-op-vender').disabled = !DADOS[servidor].disponivelCompra;
+            
+            const btnComp = document.getElementById('btn-op-comprar');
+            const btnVend = document.getElementById('btn-op-vender');
+            btnComp.innerText = DADOS[servidor].disponivelVenda ? "Comprar Coins" : "Sem Estoque";
+            btnVend.innerText = DADOS[servidor].disponivelCompra ? "Vender Coins" : "Estoque Abastecido";
+            btnComp.disabled = !DADOS[servidor].disponivelVenda;
+            btnVend.disabled = !DADOS[servidor].disponivelCompra;
+
             setOperacao(DADOS[servidor].disponivelVenda ? 'comprar' : 'vender');
-            setTimeout(() => { document.getElementById('formArea').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+            setTimeout(() => { document.getElementById('formArea').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 150);
         }
 
         function setOperacao(op) {
             operacaoAtiva = op;
             document.querySelectorAll('.op-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.op === op));
-            atualizarTudo();
+            
+            // Lógica para esconder/mostrar campo Reais e ajustar layout
+            const groupReais = document.getElementById('groupReais');
+            const groupQtd = document.getElementById('groupQtd');
+            
+            if(op === 'comprar') {
+                groupReais.style.display = 'block';
+                groupQtd.style.gridColumn = 'span 1';
+            } else {
+                groupReais.style.display = 'none';
+                groupQtd.style.gridColumn = 'span 2';
+                document.getElementById('inputReais').value = "";
+            }
+            
+            atualizarTudo('qtd');
         }
 
-        function atualizarTudo() {
+        function atualizarTudo(origem) {
             if (!servidorAtivo) return;
-            const qtd = parseFloat(document.getElementById('inputQtd').value) || 0, nick = document.getElementById('inputNick').value || "...", ind = document.getElementById('inputIndicacao').value || "Grupo de Trade", preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
-            document.getElementById('summaryBox').innerHTML = `<div class="summary-line"><span>Operação:</span> <b>${operacaoAtiva.toUpperCase()}</b></div><div class="summary-line"><span>Quantia:</span> <b>${qtd} Coins</b></div><div class="summary-line"><span>Nick:</span> <b>${nick}</b></div><div class="summary-line"><span>Indicação:</span> <b>${ind}</b></div><div class="summary-line total-line"><span>Total:</span> <span>R$ ${((qtd/1000)*preco).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span></div>`;
+            const inputQtd = document.getElementById('inputQtd'), inputReais = document.getElementById('inputReais'), errorMsg = document.getElementById('errorQtd');
+            const precoBase = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
+            
+            if(origem === 'reais' && operacaoAtiva === 'comprar') {
+                const reais = parseFloat(inputReais.value) || 0;
+                inputQtd.value = Math.round(((reais / precoBase) * 1000) / 25) * 25;
+                inputQtd.classList.remove('invalid'); errorMsg.style.display = 'none';
+            } else if(origem === 'qtd') {
+                const qtd = parseFloat(inputQtd.value) || 0;
+                if (qtd > 0 && qtd % 25 !== 0) { inputQtd.classList.add('invalid'); errorMsg.style.display = 'block'; }
+                else { inputQtd.classList.remove('invalid'); errorMsg.style.display = 'none'; }
+                
+                if(operacaoAtiva === 'comprar') {
+                    inputReais.value = ((qtd / 1000) * precoBase).toFixed(2);
+                }
+            }
+            const qtdFinal = inputQtd.value || 0, nick = document.getElementById('inputNick').value || "...", ind = document.getElementById('inputIndicacao').value || "Grupo de Trade";
+            document.getElementById('summaryBox').innerHTML = `<div class="summary-line"><span>Operação:</span> <b>${operacaoAtiva.toUpperCase()}</b></div><div class="summary-line"><span>Quantia:</span> <b>${qtdFinal} Coins</b></div><div class="summary-line"><span>Nick:</span> <b>${nick}</b></div><div class="summary-line"><span>Indicação:</span> <b>${ind}</b></div><div class="summary-line total-line"><span>Total:</span> <span>R$ ${((qtdFinal / 1000) * precoBase).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span></div>`;
+        }
+
+        function showFakeOrder() {
+            if (!ESTOU_ONLINE) return;
+            const nome = NOMES_FEED[Math.floor(Math.random() * NOMES_FEED.length)], server = Math.random() > 0.5 ? "DeusOT" : "RubinOT", type = Math.random() > 0.5 ? "comprou" : "vendeu", q = (Math.floor(Math.random() * 40) + 4) * 25;
+            document.getElementById('orderText').innerHTML = `<b>${nome}</b> ${type} <br><b>${q} Coins</b> no ${server}`;
+            document.getElementById('orderPop').classList.add('show');
+            setTimeout(() => document.getElementById('orderPop').classList.remove('show'), 6000);
+            setTimeout(showFakeOrder, Math.random() * (180000 - 60000) + 60000);
         }
 
         function fecharJanela() { servidorAtivo = null; document.getElementById('formArea').style.display = 'none'; document.querySelectorAll('.card').forEach(c => c.classList.remove('active')); }
@@ -281,16 +298,16 @@
 
         function enviarZap() {
             const qtd = document.getElementById('inputQtd').value, nick = document.getElementById('inputNick').value, ind = document.getElementById('inputIndicacao').value || "Grupo de Trade";
-            if(!qtd || !nick) return alert("Preencha todos os campos!");
-            if(!ESTOU_ONLINE) { if(!confirm("No momento não estou disponível. Deseja enviar o pedido assim mesmo? Responderei assim que possível!")) return; }
+            
+            if(!qtd || !nick || nick === "...") return alert("Preencha todos os campos!");
+            if(parseFloat(qtd) % 25 !== 0) return alert("A quantidade de coins deve ser múltipla de 25!");
             
             const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
             const total = (parseFloat(qtd) / 1000) * preco;
             
-            // MENSAGEM ORIGINAL 100% RESTAURADA
             const msg = 
                 `--- _*PEDIDO NANDO COINS*_ ---%0A` +
-				`----------------------------%0A` +
+                `----------------------------%0A` +
                 `*Operação:* Quero ${operacaoAtiva.toUpperCase()}%0A` +
                 `*Servidor:* ${servidorAtivo}%0A` +
                 `*Quantidade:* ${qtd} Coins%0A` +
@@ -303,6 +320,9 @@
 
             window.open(`https://wa.me/${MEU_WHATSAPP}?text=${msg}`, '_blank');
         }
+
+        inicializar();
+        if (ESTOU_ONLINE) setTimeout(showFakeOrder, 15000);
     </script>
 </body>
 </html>
