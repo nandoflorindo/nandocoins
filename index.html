@@ -148,7 +148,17 @@
                 </div>
             </div>
 
-            <div class="form-group"><label>Seu Nick no Jogo</label><input type="text" id="inputNick" placeholder="Nome do personagem" oninput="atualizarTudo()"></div>
+            <div class="form-row">
+                <div class="form-group" id="groupNick" style="grid-column: span 2;">
+                    <label>Seu Nick no Jogo</label>
+                    <input type="text" id="inputNick" placeholder="Nome do personagem" oninput="atualizarTudo()">
+                </div>
+                <div class="form-group" id="groupCupom" style="display: none;">
+                    <label>Cupom (Opcional)</label>
+                    <input type="text" id="inputCupom" placeholder="Código" oninput="atualizarTudo()">
+                </div>
+            </div>
+
             <div class="form-group"><label>Indicado por (Opcional)</label><select id="inputIndicacao" onchange="atualizarTudo()"></select></div>
             <div class="summary-box" id="summaryBox"></div>
             <button class="whatsapp-btn" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
@@ -174,8 +184,15 @@
         const ESTOU_ONLINE = true;          
 
         const DADOS = {
-            "DeusOT": { venda: 79.00, compra: 70.00, disponivelVenda: true, disponivelCompra: true },
+            "DeusOT": { venda: 80.00, compra: 70.00, disponivelVenda: true, disponivelCompra: true },
             "RubinOT": { venda: 86.00, compra: 81.00, disponivelVenda: false, disponivelCompra: true }
+        };
+
+        const CUPONS = {
+            "NANDO": 1.00,
+            "HUSSEL": 1.00,
+            "BIGODIN": 1.00,
+            "SECRETO": 1.00
         };
 
         const NOVIDADES = [
@@ -246,17 +263,30 @@
             operacaoAtiva = op;
             document.querySelectorAll('.op-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.op === op));
             
-            // Lógica para esconder/mostrar campo Reais e ajustar layout
             const groupReais = document.getElementById('groupReais');
             const groupQtd = document.getElementById('groupQtd');
+            const groupCupom = document.getElementById('groupCupom');
+            const groupNick = document.getElementById('groupNick');
             
-            if(op === 'comprar') {
+            // Regra do Cupom restrita ao DeusOT
+            const permiteCupom = (operacaoAtiva === 'comprar' && servidorAtivo === 'DeusOT');
+            
+            if(operacaoAtiva === 'comprar') {
                 groupReais.style.display = 'block';
                 groupQtd.style.gridColumn = 'span 1';
             } else {
                 groupReais.style.display = 'none';
                 groupQtd.style.gridColumn = 'span 2';
                 document.getElementById('inputReais').value = "";
+            }
+
+            if(permiteCupom) {
+                groupCupom.style.display = 'block';
+                groupNick.style.gridColumn = 'span 1';
+            } else {
+                groupCupom.style.display = 'none';
+                groupNick.style.gridColumn = 'span 2';
+                document.getElementById('inputCupom').value = "";
             }
             
             atualizarTudo('qtd');
@@ -265,6 +295,7 @@
         function atualizarTudo(origem) {
             if (!servidorAtivo) return;
             const inputQtd = document.getElementById('inputQtd'), inputReais = document.getElementById('inputReais'), errorMsg = document.getElementById('errorQtd');
+            const inputCupom = document.getElementById('inputCupom').value.toUpperCase().trim();
             const precoBase = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
             
             if(origem === 'reais' && operacaoAtiva === 'comprar') {
@@ -280,8 +311,35 @@
                     inputReais.value = ((qtd / 1000) * precoBase).toFixed(2);
                 }
             }
-            const qtdFinal = inputQtd.value || 0, nick = document.getElementById('inputNick').value || "...", ind = document.getElementById('inputIndicacao').value || "Grupo de Trade";
-            document.getElementById('summaryBox').innerHTML = `<div class="summary-line"><span>Operação:</span> <b>${operacaoAtiva.toUpperCase()}</b></div><div class="summary-line"><span>Quantia:</span> <b>${qtdFinal} Coins</b></div><div class="summary-line"><span>Nick:</span> <b>${nick}</b></div><div class="summary-line"><span>Indicação:</span> <b>${ind}</b></div><div class="summary-line total-line"><span>Total:</span> <span>R$ ${((qtdFinal / 1000) * precoBase).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span></div>`;
+
+            const qtdFinal = parseFloat(inputQtd.value) || 0;
+            let totalFinal = (qtdFinal / 1000) * precoBase;
+            
+            // Desconto de cupom só para DeusOT
+            let descontoAplicado = 0;
+            if (servidorAtivo === 'DeusOT' && operacaoAtiva === 'comprar' && CUPONS[inputCupom] && totalFinal > 0) {
+                descontoAplicado = CUPONS[inputCupom];
+                totalFinal -= descontoAplicado;
+                if (totalFinal < 0) totalFinal = 0;
+            }
+
+            const nick = document.getElementById('inputNick').value || "...";
+            const ind = document.getElementById('inputIndicacao').value || "Grupo de Trade";
+
+            let resumoHTML = `
+                <div class="summary-line"><span>Operação:</span> <b>${operacaoAtiva.toUpperCase()}</b></div>
+                <div class="summary-line"><span>Quantia:</span> <b>${qtdFinal} Coins</b></div>
+                <div class="summary-line"><span>Nick:</span> <b>${nick}</b></div>
+                <div class="summary-line"><span>Indicação:</span> <b>${ind}</b></div>
+            `;
+
+            if (descontoAplicado > 0) {
+                resumoHTML += `<div class="summary-line" style="color:var(--green)"><span>Desconto Cupom:</span> <b>- R$ ${descontoAplicado.toFixed(2).replace('.', ',')}</b></div>`;
+            }
+
+            resumoHTML += `<div class="summary-line total-line"><span>Total:</span> <span>R$ ${totalFinal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span></div>`;
+            
+            document.getElementById('summaryBox').innerHTML = resumoHTML;
         }
 
         function showFakeOrder() {
@@ -297,13 +355,20 @@
         function fecharAoClicarFora(event) { if (servidorAtivo && !document.getElementById('formArea').contains(event.target)) fecharJanela(); }
 
         function enviarZap() {
-            const qtd = document.getElementById('inputQtd').value, nick = document.getElementById('inputNick').value, ind = document.getElementById('inputIndicacao').value || "Grupo de Trade";
+            const qtd = document.getElementById('inputQtd').value, nick = document.getElementById('inputNick').value, ind = document.getElementById('inputIndicacao').value || "Grupo de Trade", cupom = document.getElementById('inputCupom').value.toUpperCase().trim();
             
             if(!qtd || !nick || nick === "...") return alert("Preencha todos os campos!");
             if(parseFloat(qtd) % 25 !== 0) return alert("A quantidade de coins deve ser múltipla de 25!");
             
             const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
-            const total = (parseFloat(qtd) / 1000) * preco;
+            let total = (parseFloat(qtd) / 1000) * preco;
+            
+            let msgCupom = "";
+            // Travando desconto no WhatsApp só para DeusOT
+            if (servidorAtivo === 'DeusOT' && operacaoAtiva === 'comprar' && CUPONS[cupom]) {
+                total -= CUPONS[cupom];
+                msgCupom = `*Cupom:* ${cupom} (- R$ ${CUPONS[cupom].toFixed(2)})%0A`;
+            }
             
             const msg = 
                 `--- _*PEDIDO NANDO COINS*_ ---%0A` +
@@ -313,6 +378,7 @@
                 `*Quantidade:* ${qtd} Coins%0A` +
                 `*Nick:* ${nick}%0A` +
                 `*Indicação:* ${ind}%0A` +
+                msgCupom +
                 `----------------------------%0A` +
                 `*VALOR TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
                 `----------------------------%0A` +
