@@ -77,7 +77,6 @@
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
         .total-line { font-size: 24px; font-weight: 700; border-top: 1px solid #444; padding-top: 15px; margin-top: 10px; color: var(--gold); }
 
-        /* Estilo do Widget de Entrega */
         .delivery-status { text-align: center; font-size: 11px; color: #aaa; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .pulse-dot { height: 8px; width: 8px; background-color: var(--green); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 200, 83, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); } }
@@ -168,7 +167,7 @@
             
             <div class="summary-box" id="summaryBox"></div>
             
-            <div class="delivery-status" id="deliveryWidget">
+            <div class="delivery-status" id="deliveryWidget" style="display: none;">
                 <span class="pulse-dot"></span>
                 <span id="deliveryTimeText">⚡ Última entrega realizada há 2 minutos</span>
             </div>
@@ -225,13 +224,13 @@
            ||                LÓGICA DO SITE - NÃO ALTERAR ABAIXO                  ||
            ========================================================================== */
 
-        // Lógica do Widget de Entrega
         let minutosEntrega = 2;
         function atualizarTempoEntrega() {
+            if (!ESTOU_ONLINE) return; // Não atualiza se estiver offline
             minutosEntrega++;
             if (minutosEntrega > 12) minutosEntrega = Math.floor(Math.random() * 4) + 2;
             document.getElementById('deliveryTimeText').innerText = `⚡ Última entrega realizada há ${minutosEntrega} minutos`;
-            setTimeout(atualizarTempoEntrega, 60000); // Atualiza o texto a cada 1 minuto
+            setTimeout(atualizarTempoEntrega, 60000);
         }
 
         function inicializar() {
@@ -260,7 +259,14 @@
             barraStatus.innerHTML = ESTOU_ONLINE ? "📡 STATUS: ONLINE - Atendimento imediato!" : "💤 STATUS: OFFLINE - Retorno assim que possível!";
             barraStatus.className = "notice-bar " + (ESTOU_ONLINE ? "status-online" : "status-offline");
             
-            atualizarTempoEntrega(); // Inicia o contador do widget
+            // Controle de visibilidade do widget de entrega
+            const widget = document.getElementById('deliveryWidget');
+            if (ESTOU_ONLINE) {
+                widget.style.display = 'flex';
+                atualizarTempoEntrega();
+            } else {
+                widget.style.display = 'none';
+            }
         }
 
         let servidorAtivo = null, operacaoAtiva = null;
@@ -369,7 +375,6 @@
             document.getElementById('orderText').innerHTML = `<b>${nome}</b> ${type} <br><b>${q} Coins</b> no ${server}`;
             document.getElementById('orderPop').classList.add('show');
             
-            // Simula reset do widget quando uma ordem aparece
             minutosEntrega = Math.floor(Math.random() * 2) + 1;
             document.getElementById('deliveryTimeText').innerText = `⚡ Última entrega realizada há ${minutosEntrega} minutos`;
 
@@ -385,6 +390,12 @@
             
             if(!qtd || !nick || nick === "...") return alert("Preencha todos os campos!");
             if(parseFloat(qtd) % 25 !== 0) return alert("A quantidade de coins deve ser múltipla de 25!");
+
+            /* Alerta Status Offline */
+            if (!ESTOU_ONLINE) {
+                const prosseguir = confirm("Atenção: No momento estou OFFLINE. Você pode enviar o pedido, mas o atendimento não será imediato. Deseja continuar?");
+                if (!prosseguir) return;
+            }
             
             const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
             let total = (parseFloat(qtd) / 1000) * preco;
