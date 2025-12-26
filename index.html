@@ -77,6 +77,11 @@
         .summary-line { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
         .total-line { font-size: 24px; font-weight: 700; border-top: 1px solid #444; padding-top: 15px; margin-top: 10px; color: var(--gold); }
 
+        /* Estilo do Widget de Entrega */
+        .delivery-status { text-align: center; font-size: 11px; color: #aaa; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .pulse-dot { height: 8px; width: 8px; background-color: var(--green); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 200, 83, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); } }
+
         .whatsapp-btn { background: #25d366; color: white; width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 16px; transition: 0.3s; text-transform: uppercase; }
         .wpp-float { position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px; background-color: #25d366; border-radius: 50px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; }
         .wpp-float img { width: 35px; height: 35px; }
@@ -160,7 +165,14 @@
             </div>
 
             <div class="form-group"><label>Indicado por (Opcional)</label><select id="inputIndicacao" onchange="atualizarTudo()"></select></div>
+            
             <div class="summary-box" id="summaryBox"></div>
+            
+            <div class="delivery-status" id="deliveryWidget">
+                <span class="pulse-dot"></span>
+                <span id="deliveryTimeText">⚡ Última entrega realizada há 2 minutos</span>
+            </div>
+
             <button class="whatsapp-btn" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
         </div>
     </div>
@@ -185,7 +197,7 @@
 
         const DADOS = {
             "DeusOT": { venda: 80.00, compra: 70.00, disponivelVenda: true, disponivelCompra: true },
-            "RubinOT": { venda: 86.00, compra: 81.00, disponivelVenda: false, disponivelCompra: true }
+            "RubinOT": { venda: 86.00, compra: 81.00, disponivelVenda: false, disponivelCompra: false }
         };
 
         const CUPONS = {
@@ -213,6 +225,15 @@
            ||                LÓGICA DO SITE - NÃO ALTERAR ABAIXO                  ||
            ========================================================================== */
 
+        // Lógica do Widget de Entrega
+        let minutosEntrega = 2;
+        function atualizarTempoEntrega() {
+            minutosEntrega++;
+            if (minutosEntrega > 12) minutosEntrega = Math.floor(Math.random() * 4) + 2;
+            document.getElementById('deliveryTimeText').innerText = `⚡ Última entrega realizada há ${minutosEntrega} minutos`;
+            setTimeout(atualizarTempoEntrega, 60000); // Atualiza o texto a cada 1 minuto
+        }
+
         function inicializar() {
             const ticker = document.getElementById('tickerContainer');
             let content = '<div class="ticker-content">';
@@ -238,6 +259,8 @@
             const barraStatus = document.getElementById('statusBarr');
             barraStatus.innerHTML = ESTOU_ONLINE ? "📡 STATUS: ONLINE - Atendimento imediato!" : "💤 STATUS: OFFLINE - Retorno assim que possível!";
             barraStatus.className = "notice-bar " + (ESTOU_ONLINE ? "status-online" : "status-offline");
+            
+            atualizarTempoEntrega(); // Inicia o contador do widget
         }
 
         let servidorAtivo = null, operacaoAtiva = null;
@@ -268,7 +291,6 @@
             const groupCupom = document.getElementById('groupCupom');
             const groupNick = document.getElementById('groupNick');
             
-            // Regra do Cupom restrita ao DeusOT
             const permiteCupom = (operacaoAtiva === 'comprar' && servidorAtivo === 'DeusOT');
             
             if(operacaoAtiva === 'comprar') {
@@ -315,7 +337,6 @@
             const qtdFinal = parseFloat(inputQtd.value) || 0;
             let totalFinal = (qtdFinal / 1000) * precoBase;
             
-            // Desconto de cupom só para DeusOT
             let descontoAplicado = 0;
             if (servidorAtivo === 'DeusOT' && operacaoAtiva === 'comprar' && CUPONS[inputCupom] && totalFinal > 0) {
                 descontoAplicado = CUPONS[inputCupom];
@@ -347,6 +368,11 @@
             const nome = NOMES_FEED[Math.floor(Math.random() * NOMES_FEED.length)], server = Math.random() > 0.5 ? "DeusOT" : "RubinOT", type = Math.random() > 0.5 ? "comprou" : "vendeu", q = (Math.floor(Math.random() * 40) + 4) * 25;
             document.getElementById('orderText').innerHTML = `<b>${nome}</b> ${type} <br><b>${q} Coins</b> no ${server}`;
             document.getElementById('orderPop').classList.add('show');
+            
+            // Simula reset do widget quando uma ordem aparece
+            minutosEntrega = Math.floor(Math.random() * 2) + 1;
+            document.getElementById('deliveryTimeText').innerText = `⚡ Última entrega realizada há ${minutosEntrega} minutos`;
+
             setTimeout(() => document.getElementById('orderPop').classList.remove('show'), 6000);
             setTimeout(showFakeOrder, Math.random() * (180000 - 60000) + 60000);
         }
@@ -364,7 +390,6 @@
             let total = (parseFloat(qtd) / 1000) * preco;
             
             let msgCupom = "";
-            // Travando desconto no WhatsApp só para DeusOT
             if (servidorAtivo === 'DeusOT' && operacaoAtiva === 'comprar' && CUPONS[cupom]) {
                 total -= CUPONS[cupom];
                 msgCupom = `*Cupom:* ${cupom} (- R$ ${CUPONS[cupom].toFixed(2)})%0A`;
