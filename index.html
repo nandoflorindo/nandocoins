@@ -29,15 +29,33 @@
             scroll-behavior: smooth;
         }
 
-        /* Remove as setas (spinners) dos campos numéricos */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
             -webkit-appearance: none; 
             margin: 0; 
         }
-        input[type=number] {
-            -moz-appearance: textfield;
+        input[type=number] { -moz-appearance: textfield; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
         }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 75, 75, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 75, 75, 0); }
+        }
+
+        .input-error-shake { animation: shake 0.3s ease-in-out; }
+        .input-invalid-pulse { border-color: var(--red) !important; animation: pulse-red 1.5s infinite; }
+
+        /* STEPPER STYLES */
+        .stepper-container { display: flex; align-items: center; background: var(--input-bg); border-radius: 12px; border: 1px solid #444; overflow: hidden; }
+        .stepper-btn { background: rgba(255,211,105,0.1); border: none; color: var(--gold); width: 50px; height: 50px; font-size: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .stepper-btn:hover { background: var(--gold); color: #222; }
+        .stepper-container input { border: none !important; text-align: center; flex: 1; height: 50px; background: transparent !important; }
 
         .ticker-wrapper { background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border-bottom: 1px solid var(--glass); overflow: hidden; white-space: nowrap; padding: 12px 0; display: flex; }
         .ticker-content { display: inline-block; padding-left: 100%; animation: ticker 40s linear infinite; }
@@ -74,8 +92,8 @@
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .form-group { margin-bottom: 20px; position: relative; }
         .form-group label { display: block; font-size: 13px; color: var(--gold); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
-        .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: var(--input-bg); color: white; box-sizing: border-box; outline: none; font-size: 16px; }
-        .form-group input.invalid { border-color: var(--red); box-shadow: 0 0 10px rgba(255, 75, 75, 0.2); }
+        .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #444; background: var(--input-bg); color: white; box-sizing: border-box; outline: none; font-size: 16px; transition: all 0.2s; }
+        
         .error-msg { color: var(--red); font-size: 11px; margin-top: 5px; display: none; font-weight: 600; }
 
         .operation-selector { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
@@ -92,6 +110,8 @@
         @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 200, 83, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 200, 83, 0); } }
 
         .whatsapp-btn { background: #25d366; color: white; width: 100%; padding: 18px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 16px; transition: 0.3s; text-transform: uppercase; }
+        .whatsapp-btn:disabled { background: #128c7e; cursor: not-allowed; opacity: 0.8; }
+        
         .wpp-float { position: fixed; width: 60px; height: 60px; bottom: 20px; right: 20px; background-color: #25d366; border-radius: 50px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; }
         .wpp-float img { width: 35px; height: 35px; }
 
@@ -153,7 +173,11 @@
             <div class="form-row" id="formRowInputs">
                 <div class="form-group" id="groupQtd" style="grid-column: span 2;">
                     <label>Quantidade de Coins</label>
-                    <input type="number" id="inputQtd" inputmode="numeric" placeholder="Ex: 1000" oninput="atualizarTudo('qtd')">
+                    <div class="stepper-container">
+                        <button class="stepper-btn" onclick="ajustarQtd(-25)">-</button>
+                        <input type="number" id="inputQtd" inputmode="numeric" placeholder="Ex: 1000" oninput="atualizarTudo('qtd')">
+                        <button class="stepper-btn" onclick="ajustarQtd(25)">+</button>
+                    </div>
                     <div id="errorQtd" class="error-msg">Use múltiplos de 25</div>
                 </div>
                 <div class="form-group" id="groupReais" style="display: none;">
@@ -182,7 +206,7 @@
                 <span id="deliveryTimeText">⚡ Última entrega realizada há 2 minutos</span>
             </div>
 
-            <button class="whatsapp-btn" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
+            <button class="whatsapp-btn" id="btnZap" onclick="enviarZap()">Enviar Pedido via WhatsApp</button>
         </div>
     </div>
 
@@ -239,6 +263,15 @@
             if (minutosEntrega > 12) minutosEntrega = Math.floor(Math.random() * 4) + 2;
             document.getElementById('deliveryTimeText').innerText = `⚡ Última entrega realizada há ${minutosEntrega} minutos`;
             setTimeout(atualizarTempoEntrega, 60000);
+        }
+
+        function ajustarQtd(valor) {
+            const input = document.getElementById('inputQtd');
+            let atual = parseInt(input.value) || 0;
+            atual += valor;
+            if(atual < 0) atual = 0;
+            input.value = atual;
+            atualizarTudo('qtd');
         }
 
         function inicializar() {
@@ -339,11 +372,21 @@
                 const reais = parseFloat(inputReais.value) || 0;
                 if (reais === 0) inputQtd.value = "";
                 else inputQtd.value = Math.round(((reais / precoBase) * 1000) / 25) * 25;
-                inputQtd.classList.remove('invalid'); errorMsg.style.display = 'none';
+                inputQtd.classList.remove('input-invalid-pulse', 'input-error-shake'); errorMsg.style.display = 'none';
             } else if(origem === 'qtd') {
                 const qtd = parseFloat(inputQtd.value) || 0;
-                if (qtd > 0 && qtd % 25 !== 0) { inputQtd.classList.add('invalid'); errorMsg.style.display = 'block'; }
-                else { inputQtd.classList.remove('invalid'); errorMsg.style.display = 'none'; }
+                
+                if (qtd > 0 && qtd % 25 !== 0) { 
+                    inputQtd.classList.add('input-invalid-pulse'); 
+                    if(!inputQtd.classList.contains('input-error-shake')) {
+                        inputQtd.classList.add('input-error-shake');
+                        setTimeout(() => inputQtd.classList.remove('input-error-shake'), 300);
+                    }
+                    errorMsg.style.display = 'block'; 
+                } else { 
+                    inputQtd.classList.remove('input-invalid-pulse', 'input-error-shake'); 
+                    errorMsg.style.display = 'none'; 
+                }
                 
                 if(operacaoAtiva === 'comprar') {
                     if (qtd === 0) inputReais.value = "";
@@ -385,14 +428,10 @@
             const server = Math.random() > 0.5 ? "DeusOT" : "RubinOT";
             const type = Math.random() > 0.5 ? "venda" : "compra";
             
-            // Lógica de quantidade: Múltiplos de 25 até 6k.
-            // 80% de chance de ser entre 100 e 1500.
             let qtd;
             if (Math.random() < 0.8) {
-                // Frequência maior: 100 a 1500
                 qtd = Math.floor(Math.random() * (1500 / 25 - 100 / 25 + 1) + 100 / 25) * 25;
             } else {
-                // Frequência menor: Restante até 6000
                 qtd = Math.floor(Math.random() * (6000 / 25) + 1) * 25;
             }
 
@@ -403,8 +442,6 @@
             document.getElementById('deliveryTimeText').innerText = `⚡ Última entrega realizada há ${minutosEntrega} minutos`;
 
             setTimeout(() => document.getElementById('orderPop').classList.remove('show'), 6000);
-            
-            // Próximo intervalo aleatório entre 1 e 10 minutos (60.000ms a 600.000ms)
             const proximoIntervalo = Math.floor(Math.random() * (600000 - 60000 + 1) + 60000);
             setTimeout(showFakeOrder, proximoIntervalo);
         }
@@ -413,44 +450,60 @@
         function fecharAoClicarFora(event) { if (servidorAtivo && !document.getElementById('formArea').contains(event.target)) fecharJanela(); }
 
         function enviarZap() {
+            const btn = document.getElementById('btnZap');
             const qtd = document.getElementById('inputQtd').value, nick = document.getElementById('inputNick').value, ind = document.getElementById('inputIndicacao').value || "Grupo de Trade", cupom = document.getElementById('inputCupom').value.toUpperCase().trim();
             
             if(!qtd || !nick || nick === "...") return alert("Preencha todos os campos!");
             if(parseFloat(qtd) % 25 !== 0) return alert("A quantidade de coins deve ser múltipla de 25!");
 
-            if (!ESTOU_ONLINE) {
-                const prosseguir = confirm("Atenção: No momento estou OFFLINE. Você pode enviar o pedido, mas o atendimento não será imediato. Deseja continuar?");
-                if (!prosseguir) return;
-            }
-            
-            const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
-            let total = (parseFloat(qtd) / 1000) * preco;
-            
-            let msgCupom = "";
-            if (servidorAtivo === 'DeusOT' && operacaoAtiva === 'comprar' && CUPONS[cupom]) {
-                total -= CUPONS[cupom];
-                msgCupom = `*Cupom:* ${cupom} (- R$ ${CUPONS[cupom].toFixed(2)})%0A`;
-            }
-            
-            const msg = 
-                `--- _*PEDIDO NANDO COINS*_ ---%0A` +
-                `----------------------------%0A` +
-                `*Operação:* Quero ${operacaoAtiva.toUpperCase()}%0A` +
-                `*Servidor:* ${servidorAtivo}%0A` +
-                `*Quantidade:* ${qtd} Coins%0A` +
-                `*Nick:* ${nick}%0A` +
-                `*Indicação:* ${ind}%0A` +
-                msgCupom +
-                `----------------------------%0A` +
-                `*VALOR TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
-                `----------------------------%0A` +
-                `_Favor aguardar a resposta para o PIX_`;
+            // FEEDBACK DE CARREGAMENTO
+            btn.disabled = true;
+            btn.innerText = "⏳ Gerando Pedido...";
 
-            window.open(`https://wa.me/${MEU_WHATSAPP}?text=${msg}`, '_blank');
+            setTimeout(() => {
+                if (!ESTOU_ONLINE) {
+                    const prosseguir = confirm("Atenção: No momento estou OFFLINE. Você pode enviar o pedido, mas o atendimento não será imediato. Deseja continuar?");
+                    if (!prosseguir) {
+                        btn.disabled = false;
+                        btn.innerText = "Enviar Pedido via WhatsApp";
+                        return;
+                    }
+                }
+                
+                const preco = operacaoAtiva === 'comprar' ? DADOS[servidorAtivo].venda : DADOS[servidorAtivo].compra;
+                let total = (parseFloat(qtd) / 1000) * preco;
+                
+                let msgCupom = "";
+                if (servidorAtivo === 'DeusOT' && operacaoAtiva === 'comprar' && CUPONS[cupom]) {
+                    total -= CUPONS[cupom];
+                    msgCupom = `*Cupom:* ${cupom} (- R$ ${CUPONS[cupom].toFixed(2)})%0A`;
+                }
+                
+                const msg = 
+                    `--- _*PEDIDO NANDO COINS*_ ---%0A` +
+                    `----------------------------%0A` +
+                    `*Operação:* Quero ${operacaoAtiva.toUpperCase()}%0A` +
+                    `*Servidor:* ${servidorAtivo}%0A` +
+                    `*Quantidade:* ${qtd} Coins%0A` +
+                    `*Nick:* ${nick}%0A` +
+                    `*Indicação:* ${ind}%0A` +
+                    msgCupom +
+                    `----------------------------%0A` +
+                    `*VALOR TOTAL:* R$ ${total.toFixed(2).replace('.', ',')}%0A` +
+                    `----------------------------%0A` +
+                    `_Favor aguardar a resposta para o PIX_`;
+
+                window.open(`https://wa.me/${MEU_WHATSAPP}?text=${msg}`, '_blank');
+                
+                // Reseta o botão após abrir o zap
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Enviar Pedido via WhatsApp";
+                }, 1000);
+            }, 1200);
         }
 
         inicializar();
-        // Dispara a primeira mensagem após 15 segundos
         if (ESTOU_ONLINE) setTimeout(showFakeOrder, 15000);
     </script>
 </body>
